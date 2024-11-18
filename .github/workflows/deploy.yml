@@ -52,7 +52,7 @@ jobs:
           TARGET: ${{ secrets.CPANEL_TARGET }}
         with:
           args: |
-            rsync -r --delete-after --exclude=".env" ./ u1605088@194.163.41.126:$/home/u1605088/public_html/adaptif.rumahilmu.org
+            rsync -r --delete-after --exclude=".env" ./ u1605088@194.163.41.126:/home/u1605088/public_html/adaptif.rumahilmu.org
 
       # Step 7: Run Laravel-specific setup commands
       - name: Run Post-Deployment Commands
