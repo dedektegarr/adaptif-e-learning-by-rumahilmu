@@ -52,7 +52,7 @@ jobs:
           TARGET: ${{ secrets.CPANEL_TARGET }}
         with:
           args: |
-            rsync -r --delete-after --exclude=".env" ./ ${REMOTE_USER}@${REMOTE_HOST}:${TARGET} -p 65002
+            rsync -r --delete-after --exclude=".env" ./ ${REMOTE_USER}@${REMOTE_HOST}:${TARGET}
 
       # Step 7: Run Laravel-specific setup commands
       - name: Run Post-Deployment Commands
