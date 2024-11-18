@@ -52,7 +52,9 @@ Route::get('/registration', function () {
 })->name('registration');
 
 Route::post('/registration', [RegistrationController::class, 'registrationPost'])->name('registrationPost');
-
+Route::get('/testing_duls', function () {
+    return "OK";
+});
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
