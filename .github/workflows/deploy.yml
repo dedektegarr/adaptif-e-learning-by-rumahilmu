@@ -47,17 +47,19 @@ jobs:
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SOURCE: "."
           REMOTE_HOST: ${{ secrets.CPANEL_HOST }}
           REMOTE_USER: ${{ secrets.CPANEL_USER }}
           TARGET: ${{ secrets.CPANEL_TARGET }}
-        with:
-          args: |
-            rsync -r --delete-after --exclude=".env" ./ "${REMOTE_USER}@${REMOTE_HOST}:${TARGET}"
 
       # Step 7: Run Laravel-specific setup commands
-      - name: Run Post-Deployment Commands
-        run: |
-          ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "
-            cd ${TARGET} &&
+      - name: Run Remote/Artisan Commands
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USER }}
+          key: ${{ secrets.CPANEL_TARGET }}
+          script: |
+            cd ${{ secrets.CPANEL_TARGET }}
             php artisan migrate --force
-          "
+            php artisan optimize
