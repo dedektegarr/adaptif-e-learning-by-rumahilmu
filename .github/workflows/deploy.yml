@@ -50,6 +50,7 @@ jobs:
           SOURCE: "."
           REMOTE_HOST: ${{ secrets.CPANEL_HOST }}
           REMOTE_USER: ${{ secrets.CPANEL_USER }}
+          REMOTE_PORT: ${{ secrets.CPANEL_SSH_PORT }}
           TARGET: ${{ secrets.CPANEL_TARGET }}
 
       # Step 7: Run Laravel-specific setup commands
