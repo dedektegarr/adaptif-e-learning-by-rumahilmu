@@ -1,0 +1,23 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to cPanel
+        run: |
+          ssh user@your-cpanel-domain "cd /home/username/public_html && git pull origin main && composer update && php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache"
