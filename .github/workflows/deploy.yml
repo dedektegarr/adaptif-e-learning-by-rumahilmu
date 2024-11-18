@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20"
-      - run: npm ci && npm run prod
+      - run: npm ci && npm run build
 
       # Step 6: Deploy to cPanel via SSH
       - name: Deploy to cPanel
