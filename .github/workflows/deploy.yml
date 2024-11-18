@@ -54,6 +54,8 @@ jobs:
           args: |
             rsync -r --delete-after --exclude=".env" ./ ${REMOTE_USER}@${REMOTE_HOST}:${TARGET}
 
+      - name: Print Debug Info
+        run: env
       # Step 7: Run Laravel-specific setup commands
       - name: Run Post-Deployment Commands
         run: |
