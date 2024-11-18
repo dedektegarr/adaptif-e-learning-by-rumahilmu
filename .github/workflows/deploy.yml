@@ -42,6 +42,12 @@ jobs:
           node-version: "20"
       - run: npm ci && npm run build
 
+      - name: Debug Variables
+        run: |
+          echo "REMOTE_USER=${{ secrets.CPANEL_USER }}"
+          echo "REMOTE_HOST=${{ secrets.CPANEL_HOST }}"
+          echo "TARGET=${{ secrets.CPANEL_TARGET }}"
+
       # Step 6: Deploy to cPanel via SSH
       - name: Deploy to cPanel
         uses: easingthemes/ssh-deploy@v2.1.5
