@@ -83,7 +83,7 @@ Route::middleware('auth', 'isAdmin')->group(function () {
                 'jumlahKuisioner',
                 'jumlahJenisKuisioner'
             ));
-        })->middleware(['auth', 'verified'])->name('dashboard');
+        })->middleware(['auth', 'verified'])->name('admin.dashboard');
 
         Route::group(['prefix'  => 'administrator'], function () {
             Route::get('/', [AdminController::class, 'indexAdministrator'])->name('administrator.administrator');
