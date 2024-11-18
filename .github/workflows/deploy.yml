@@ -36,11 +36,11 @@ jobs:
           php artisan view:cache
 
       # Step 5: Install Node.js and build assets
-      # - name: Install Node.js and Build Assets
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: "20"
-      # - run: npm ci && npm run build
+      - name: Install Node.js and Build Assets
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - run: npm ci && npm run build
 
       # Step 6: Deploy to cPanel via SSH
       - name: Deploy to cPanel
