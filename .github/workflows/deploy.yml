@@ -19,10 +19,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2" # Adjust based on your Laravel version
-          extensions: mbstring, bcmath, mysql, intl
-          ini-values: post_max_size=256M, upload_max_filesize=256M
-          tools: composer
+          php-version: "8.3" # Adjust based on your Laravel version
 
       # Step 3: Install composer dependencies
       - name: Install Composer Dependencies
