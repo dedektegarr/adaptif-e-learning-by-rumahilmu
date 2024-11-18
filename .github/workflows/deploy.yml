@@ -59,6 +59,7 @@ jobs:
         with:
           host: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USER }}
+          port: ${{ secrets.CPANEL_SSH_PORT }}
           key: ${{ secrets.CPANEL_TARGET }}
           script: |
             cd ${{ secrets.CPANEL_TARGET }}
