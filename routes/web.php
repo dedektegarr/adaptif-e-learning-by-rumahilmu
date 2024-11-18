@@ -142,7 +142,7 @@ Route::middleware('auth', 'isMahasiswa')->group(function () {
         Route::delete('/kelas_saya/{kelas}/detail_materi/{materi}/hapus_file_tugas_kelompok/{tugasKelompok}', [MahasiswaKelasSayaController::class, 'hapusFileTugasKelompok'])->name('mahasiswa.kelas_saya.hapusFile_tugas_kelompok');
         Route::post('/kelas_saya/{kelas}/detail_materi/{materi}/tugas/{tugasKelompok}/anggota/simpan', [MahasiswaKelasSayaController::class, 'simpanAnggota'])->name('mahasiswa.kelas_saya.simpan_anggota');
         Route::delete('/kelas_saya/{kelas}/detail_materi/{materi}/tugas/{tugasKelompok}/anggota/{anggota}/hapus/', [MahasiswaKelasSayaController::class, 'hapusAnggota'])->name('mahasiswa.kelas_saya.hapus_anggota');
-        Route::delete('/kelas_saya/{kelas}/detail_materi/{materi}/tugas/{tugasKelompok}/anggota/{anggota}/pengumpulan_tugas_detail/{pengumpulanTugasDetail}/hapus', [MahasiswaKelasSayaController::class, 'hapusAnggota'])->name('mahasiswa.kelas_saya.hapus_anggota');
+        // Route::delete('/kelas_saya/{kelas}/detail_materi/{materi}/tugas/{tugasKelompok}/anggota/{anggota}/pengumpulan_tugas_detail/{pengumpulanTugasDetail}/hapus', [MahasiswaKelasSayaController::class, 'hapusAnggota'])->name('mahasiswa.kelas_saya.hapus_anggota');
         Route::post('/kelas_saya/{kelas}/detail_materi/{materi}/tugas/{tugasKelompok}/anggota/penilaian', [MahasiswaKelasSayaController::class, 'simpanPenilaian'])->name('mahasiswa.kelas_saya.simpan_penilaian');
 
         Route::get('/kelas_saya/{kelas}/detail_materi/{materi}/tugas_individu', [MahasiswaKelasSayaController::class, 'tugasIndividu'])->name('mahasiswa.kelas_saya.tugas_individu');
