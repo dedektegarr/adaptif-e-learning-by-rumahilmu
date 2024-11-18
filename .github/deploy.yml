@@ -1,0 +1,63 @@
+name: Deploy Laravel to cPanel
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to cPanel
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Setup PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2" # Adjust based on your Laravel version
+          extensions: mbstring, bcmath, mysql, intl
+          ini-values: post_max_size=256M, upload_max_filesize=256M
+          tools: composer
+
+      # Step 3: Install composer dependencies
+      - name: Install Composer Dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      # Step 4: Cache Laravel configuration and routes
+      - name: Cache Configuration and Routes
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+      # Step 5: Install Node.js and build assets
+      - name: Install Node.js and Build Assets
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - run: npm ci && npm run prod
+
+      # Step 6: Deploy to cPanel via SSH
+      - name: Deploy to cPanel
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.CPANEL_HOST }}
+          REMOTE_USER: ${{ secrets.CPANEL_USER }}
+          TARGET: ${{ secrets.CPANEL_TARGET }}
+        with:
+          args: |
+            rsync -r --delete-after --exclude=".env" ./ ${REMOTE_USER}@${REMOTE_HOST}:${TARGET}
+
+      # Step 7: Run Laravel-specific setup commands
+      - name: Run Post-Deployment Commands
+        run: |
+          ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "
+            cd ${TARGET} &&
+            php artisan migrate --force
+          "
