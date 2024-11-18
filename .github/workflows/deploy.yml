@@ -42,12 +42,6 @@ jobs:
           node-version: "20"
       - run: npm ci && npm run build
 
-      - name: Debug Variables
-        run: |
-          echo "REMOTE_USER=${{ secrets.CPANEL_USER }}"
-          echo "REMOTE_HOST=${{ secrets.CPANEL_HOST }}"
-          echo "TARGET=${{ secrets.CPANEL_TARGET }}"
-
       # Step 6: Deploy to cPanel via SSH
       - name: Deploy to cPanel
         uses: easingthemes/ssh-deploy@v2.1.5
@@ -58,7 +52,7 @@ jobs:
           TARGET: ${{ secrets.CPANEL_TARGET }}
         with:
           args: |
-            rsync -r --delete-after --exclude=".env" ./ ${REMOTE_USER}@${REMOTE_HOST}:${TARGET}
+            rsync -r --delete-after --exclude=".env" ./ ${REMOTE_USER}@${REMOTE_HOST}:${TARGET} -p 65002
 
       # Step 7: Run Laravel-specific setup commands
       - name: Run Post-Deployment Commands
