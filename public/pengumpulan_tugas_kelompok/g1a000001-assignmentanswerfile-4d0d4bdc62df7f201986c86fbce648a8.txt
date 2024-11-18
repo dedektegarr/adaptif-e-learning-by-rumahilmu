@@ -1,0 +1,17 @@
+Panduan Cara instal Camtasia 2021 Windows
+
+1. Download camtasia - Selesai download Silahkan Windows Security Off / Anti Virus Off dan Internet Off - lalu extract file zip/rar - buka Folder Hasil extract
+2. instal MicrosoftEdgeWebView2RuntimeInstallerX64
+3. Instal Camtasia Setup :
+ - Ceklis lisence
+ - Pilih menu option - hilangkan ceklis pada Star Camtasia end instal
+ - instal - Finish
+
+4. Buka folder Crack - Copy semua 3 file - Paste ke C:Program Files - TechSmith - Camtasia 2021 - Paste 3 file di folder ini
+- Klik kanan LegacyCamRecorder.exe - Propertis - Compatibility - Change settings for all users - ceklik kotak Run This Program as ad administrator - Apply lalu OK - OK
+
+5. Buka Settings - Update & Security - Windows Security - Virus & Protection - Manage settings - Add or remove exclusions - + add exclusions - Folder - arahkan ke C:Program Files/TechSmith dan select folder TechSmith
+6. Jalankan Camtasia 2021 Pada dekstop atau Start Menu
+7. Selesai instal Camtasia Full Version Permanent
+
+
