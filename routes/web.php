@@ -53,7 +53,7 @@ Route::get('/registration', function () {
 
 Route::post('/registration', [RegistrationController::class, 'registrationPost'])->name('registrationPost');
 Route::get('/testing_duls', function () {
-    return "OK";
+    return "OK DERR";
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
