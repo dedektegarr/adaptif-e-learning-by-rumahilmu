@@ -60,8 +60,9 @@ jobs:
           host: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USER }}
           port: ${{ secrets.CPANEL_SSH_PORT }}
-          key: ${{ secrets.CPANEL_TARGET }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ secrets.CPANEL_TARGET }}
+            php artisan key:generate
             php artisan migrate --force
             php artisan optimize
