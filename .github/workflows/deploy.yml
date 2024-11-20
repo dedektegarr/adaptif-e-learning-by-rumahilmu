@@ -26,11 +26,11 @@ jobs:
         run: composer install --no-dev --optimize-autoloader
 
       # Step 4: Cache Laravel configuration and routes
-      - name: Cache Configuration and Routes
-        run: |
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
+      # - name: Cache Configuration and Routes
+      #   run: |
+      #     php artisan config:cache
+      #     php artisan route:cache
+      #     php artisan view:cache
 
       # Step 5: Install Node.js and build assets
       - name: Install Node.js and Build Assets
