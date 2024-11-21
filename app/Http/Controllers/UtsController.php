@@ -21,85 +21,96 @@ class UtsController extends Controller
 
     public function add()
     {
-        $ditambahkan = Uts::select('courseId')->pluck('courseId');
-        $my_courses = Kelas::select('id', 'fullName')
+        $ditambahkan = Uts::select('kelas_id')->pluck('kelas_id');
+        $my_courses = Kelas::select('id', 'nama_kelas')
             ->whereNotIn('id', $ditambahkan)
-            ->where('teacherId', Auth::user()->id)
             ->get();
-        return view('teacher/uts.add', compact('my_courses'));
+
+        return view('admin/uts.add', compact('my_courses'));
     }
 
     public function post(Request $request)
     {
-        $attributes = [
-            'courseId'   =>  'Kelas',
-            'startDate'   =>  'Tanggal Mengerjakan',
-            'timeBegin'  =>  'Waktu Mulai',
-            'timeEnd'  =>  'Waktu Selesai',
-        ];
-        $this->validate($request, [
+        $rules = [
             'courseId'    =>  'required',
             'startDate'    =>  'required',
             'timeBegin'    =>  'required',
             'timeEnd'    =>  'required',
-        ], $attributes);
+        ];
+        $message = [
+            'courseId'   =>  'Kelas tidak boleh kosong',
+            'startDate'   =>  'Tanggal pengerjakan tidak boleh kosong',
+            'timeBegin'  =>  'Waktu mulai tidak boleh kosong',
+            'timeEnd'  =>  'Waktu selesai tidak boleh kosong',
+        ];
+        $request->validate($rules, $message);
 
         Uts::create([
-            'courseId'  =>  $request->courseId,
-            'startDate'  =>  $request->startDate,
-            'timeBegin'  =>  $request->timeBegin,
-            'timeEnd'  =>  $request->timeEnd,
+            'kelas_id'  =>  $request->courseId,
+            'tanggal_dilaksanakan'  =>  $request->startDate,
+            'waktu_mulai'  =>  $request->timeBegin,
+            'waktu_selesai'  =>  $request->timeEnd,
         ]);
 
         $notification = array(
             'message' => 'Berhasil, data ujian tengah semester berhasil ditambahkan',
             'alert-type' => 'success'
         );
-        return redirect()->route('teacher.uts')->with($notification);
+        return redirect()->route('dosen.uts')->with($notification);
     }
 
     public function edit($id)
     {
-        $mid = Uts::join('courses', 'courses.id', 'mid_exams.courseId')
-            ->select('mid_exams.id', 'fullName', 'mid_exams.startDate', 'timeBegin', 'timeEnd')
-            ->where('mid_exams.id', $id)->first();
-        return view('teacher/uts.edit', compact('mid'));
+        $mid = Uts::find($id);
+        $idKelasEdit = $mid->kelas_id;
+
+        $ditambahkan = Uts::select('kelas_id')->where('id', '!=', $id)->pluck('kelas_id');
+        $my_courses = Kelas::select('id', 'nama_kelas')
+            ->whereNotIn('id', $ditambahkan)
+            ->orWhere('id', $idKelasEdit)
+            ->get();
+
+        return view('admin/uts.edit', compact('mid', 'my_courses'));
     }
 
     public function update(Request $request, $id)
     {
-        $attributes = [
-            'startDate'   =>  'Tanggal Mengerjakan',
-            'timeBegin'  =>  'Waktu Mulai',
-            'timeEnd'  =>  'Waktu Selesai',
-        ];
-        $this->validate($request, [
+        $rules = [
+            'courseId'    =>  'required',
             'startDate'    =>  'required',
             'timeBegin'    =>  'required',
             'timeEnd'    =>  'required',
-        ], $attributes);
+        ];
+        $message = [
+            'courseId'   =>  'Kelas tidak boleh kosong',
+            'startDate'   =>  'Tanggal pengerjakan tidak boleh kosong',
+            'timeBegin'  =>  'Waktu mulai tidak boleh kosong',
+            'timeEnd'  =>  'Waktu selesai tidak boleh kosong',
+        ];
+        $request->validate($rules, $message);
 
-        Uts::where('id', $id)->update([
-            'startDate'  =>  $request->startDate,
-            'timeBegin'  =>  $request->timeBegin,
-            'timeEnd'  =>  $request->timeEnd,
+        Uts::find($id)->update([
+            'kelas_id' => $request->courseId,
+            'tanggal_dilaksanakan'  =>  $request->startDate,
+            'waktu_mulai'  =>  $request->timeBegin,
+            'waktu_selesai'  =>  $request->timeEnd,
         ]);
 
         $notification = array(
             'message' => 'Berhasil, data ujian tengah semester berhasil diubah',
             'alert-type' => 'success'
         );
-        return redirect()->route('teacher.uts')->with($notification);
+        return redirect()->route('dosen.uts')->with($notification);
     }
 
     public function delete($id)
     {
-        Uts::where('id', $id)->delete();
+        Uts::find($id)->delete();
         $notification = array(
             'message' => 'Berhasil, data ujian tengah semester berhasil dihapus',
             'alert-type' => 'success'
         );
-        return redirect()->route('teacher.uts')->with($notification);
+        return redirect()->route('dosen.uts')->with($notification);
     }
 
     public function soalIndex($id)
