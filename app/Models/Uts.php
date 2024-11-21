@@ -26,7 +26,7 @@ class Uts extends Model
     public function bankSoalPembahasans()
     {
         return $this->belongsToMany(BankSoalPembahasan::class, 'uts_soals', 'uts_id', 'bank_soal_pembahasan_id')
-                    ->withTimestamps()
-                    ->withPivot('created_at', 'updated_at', 'deleted_at');
+            ->withTimestamps()
+            ->withPivot('created_at', 'updated_at', 'deleted_at');
     }
 }

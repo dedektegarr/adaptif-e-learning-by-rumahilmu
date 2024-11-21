@@ -1,39 +1,40 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\BankCapaianLulusanController;
-use App\Http\Controllers\BankKuisionerController;
-use App\Http\Controllers\BankPenilaianKelompokController;
-use App\Http\Controllers\BankSoalPembahasanController;
-use App\Http\Controllers\CapaianLulusanKelasController;
-use App\Http\Controllers\IndikatorPenilaianController;
-use App\Http\Controllers\JawabanBankSoalPembahasanController;
-use App\Http\Controllers\JenisKuisionerController;
-use App\Http\Controllers\KelasController;
-use App\Http\Controllers\KuisionerKelasController;
-use App\Http\Controllers\KuisionerKelompokKelasController;
-use App\Http\Controllers\KuisMateriController;
-use App\Http\Controllers\MahasiswaKelasController;
-use App\Http\Controllers\MahasiswaKelasSayaController;
-use App\Http\Controllers\MahasiswaKelasTersediaController;
-use App\Http\Controllers\MahasiswaProfilController;
-use App\Http\Controllers\MateriKelasController;
-use App\Http\Controllers\PencarianController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RegistrationController;
-use App\Http\Controllers\RubrikPenilaianController;
-use App\Http\Controllers\SoalKuisMateriController;
-use App\Http\Controllers\SubCpmkController;
-use App\Http\Controllers\TopikPembahasanKelasController;
-use App\Http\Controllers\TugasKelompokMateriController;
-use App\Models\BankKuisioner;
-use App\Models\BankSoalPembahasan;
-use App\Models\JenisKuisioner;
+use App\Models\User;
 use App\Models\Kelas;
 use App\Models\Materi;
+use App\Models\BankKuisioner;
+use App\Models\JenisKuisioner;
 use App\Models\RubrikPenilaian;
-use App\Models\User;
+use App\Models\BankSoalPembahasan;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UtsController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\KelasController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SubCpmkController;
+use App\Http\Controllers\PencarianController;
+use App\Http\Controllers\KuisMateriController;
+use App\Http\Controllers\MateriKelasController;
+use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\BankKuisionerController;
+use App\Http\Controllers\JenisKuisionerController;
+use App\Http\Controllers\KuisionerKelasController;
+use App\Http\Controllers\MahasiswaKelasController;
+use App\Http\Controllers\SoalKuisMateriController;
+use App\Http\Controllers\MahasiswaProfilController;
+use App\Http\Controllers\RubrikPenilaianController;
+use App\Http\Controllers\BankCapaianLulusanController;
+use App\Http\Controllers\BankSoalPembahasanController;
+use App\Http\Controllers\IndikatorPenilaianController;
+use App\Http\Controllers\MahasiswaKelasSayaController;
+use App\Http\Controllers\CapaianLulusanKelasController;
+use App\Http\Controllers\TugasKelompokMateriController;
+use App\Http\Controllers\TopikPembahasanKelasController;
+use App\Http\Controllers\BankPenilaianKelompokController;
+use App\Http\Controllers\KuisionerKelompokKelasController;
+use App\Http\Controllers\MahasiswaKelasTersediaController;
+use App\Http\Controllers\JawabanBankSoalPembahasanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -352,6 +353,33 @@ Route::middleware('auth', 'isDosen')->group(function () {
             Route::get('/{kuisionerKelompok}/edit', [KuisionerKelompokKelasController::class, 'edit'])->name('kelas.kuisionerKelompok.edit');
             Route::patch('/{kuisionerKelompok}/update', [KuisionerKelompokKelasController::class, 'update'])->name('kelas.kuisionerKelompok.update');
             Route::delete('{kuisionerKelompok}/delete', [KuisionerKelompokKelasController::class, 'delete'])->name('kelas.kuisionerKelompok.delete');
+        });
+    });
+
+    Route::group(['prefix'  => 'ujian_tengah_semester'], function () {
+        Route::get('/', [UtsController::class, 'index'])->name('dosen.uts');
+        Route::get('/add', [UtsController::class, 'add'])->name('dosen.uts.add');
+        Route::post('/', [UtsController::class, 'post'])->name('dosen.uts.post');
+        Route::get('/{id}/edit', [UtsController::class, 'edit'])->name('dosen.uts.edit');
+        Route::patch('{id}/update', [UtsController::class, 'update'])->name('dosen.uts.update');
+        Route::delete('{id}/delete', [UtsController::class, 'delete'])->name('dosen.uts.delete');
+
+        Route::group(['prefix'  => 'tambah_soal'], function () {
+            Route::get('/{midId}', [UtsController::class, 'soalIndex'])->name('dosen.uts.soal');
+            Route::post('{midId}/', [UtsController::class, 'soalPost'])->name('dosen.uts.soal.post');
+            Route::delete('{midId}/delete/{soalId}', [UtsController::class, 'soalDelete'])->name('dosen.uts.soal.delete');
+        });
+
+        Route::group(['prefix'  => 'tambah_sesi_ujian'], function () {
+            Route::get('/{midId}', [UtsController::class, 'sesiIndex'])->name('dosen.uts.sesi');
+            Route::post('{midId}/', [UtsController::class, 'sesiPost'])->name('dosen.uts.sesi.post');
+            Route::delete('{midId}/delete/{sesiId}', [UtsController::class, 'sesiDelete'])->name('dosen.uts.sesi.delete');
+
+            Route::group(['prefix'  => 'tambah_peserta'], function () {
+                Route::get('{midId}/sesi/{sesiId}', [UtsController::class, 'pesertaIndex'])->name('dosen.uts.sesi.peserta');
+                Route::post('{midId}/{sesiId}', [UtsController::class, 'pesertaPost'])->name('dosen.uts.sesi.peserta.post');
+                Route::delete('{midId}/delete/{sesiId}/{pesertaId}', [UtsController::class, 'pesertaDelete'])->name('dosen.uts.sesi.peserta.delete');
+            });
         });
     });
 });

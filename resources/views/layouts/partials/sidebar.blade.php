@@ -128,6 +128,22 @@
             <span>Manajemen Kelas</span>
         </a>
     </li>
+    <li class="treeview {{ set_active(['dosen.uts', 'dosen.uas']) }}">
+        <a href="#">
+            <i class="fa fa-pencil"></i> <span>Manajemen Ujian</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu " style="padding-left:25px;">
+            <li class="{{ set_active(['dosen.uts', 'dosen.uts.edit']) }}"><a href="{{ route('dosen.uts') }}"><i
+                        class="fa fa-circle-o"></i>&nbsp;Ujian Tengah Semester</a>
+            </li>
+            <li class="{{ set_active(['bankKuisioner', 'bankKuisioner.edit']) }}"><a
+                    href="{{ route('bankKuisioner') }}"><i class="fa fa-circle-o"></i>&nbsp;Ujian Akhir Semester</a>
+            </li>
+        </ul>
+    </li>
 @endif
 <!-- Authentication -->
 <li>
