@@ -30,6 +30,6 @@ class UtsSoal extends Pivot
 
     public function bankSoalPembahasan(): BelongsTo
     {
-        return $this->belongsTo(BankSoalPembahasan::class, 'uts_id', 'id');
+        return $this->belongsTo(BankSoalPembahasan::class, 'bank_soal_pembahasan_id', 'id');
     }
 }

@@ -115,40 +115,38 @@ class UtsController extends Controller
 
     public function soalIndex($id)
     {
-        $mid_questions = UtsSoal::join('question_sets', 'question_sets.id', 'mid_exam_quests.questionSetId')
-            ->select('mid_exam_quests.id as id', 'question_sets.question as question')
-            ->where('UtsId', $id)
+        $mid_questions = UtsSoal::where('uts_id', $id)->get();
+        $jenis = BankSoalPembahasan::select('level_berfikir')
+            ->groupBy('level_berfikir')
             ->get();
-        $jenis = BankSoalPembahasan::select('fileReviewType')
-            ->groupBy('fileReviewType')
-            ->get();
-        $my_course = Uts::join('courses', 'courses.id', 'mid_exams.courseId')
-            ->select('courseId', 'courses.fullName')
-            ->where('mid_exams.id', $id)->first();
-        $courseId = $my_course->courseId;
+        $my_course = Uts::with('kelas')->where('id', $id)->first();
+
+        $courseId = $my_course->kelas_id;
         $midId = $id;
-        return view('teacher/uts/soal.index', compact('jenis', 'courseId', 'midId', 'mid_questions'));
+
+        return view('admin/uts/soal.index', compact('jenis', 'courseId', 'midId', 'mid_questions'));
     }
 
     public function soalPost(Request $request, $midId)
     {
-        $attributes = [
-            'questionSetId'   =>  'Pertanyaan',
+        $message = [
+            'questionSetId' => 'Pertanyaan',
         ];
-        $this->validate($request, [
-            'questionSetId'    =>  'required',
-        ], $attributes);
+
+        $request->validate([
+            'questionSetId' => 'required'
+        ], $message);
 
         UtsSoal::create([
-            'UtsId'     =>  $midId,
-            'questionSetId' =>  $request->questionSetId,
+            'uts_id'     =>  $midId,
+            'bank_soal_pembahasan_id' =>  $request->questionSetId,
         ]);
 
         $notification = array(
             'message' => 'Berhasil, soal ujian tengah semester berhasil ditambahkan',
             'alert-type' => 'success'
         );
-        return redirect()->route('teacher.uts.soal', [$midId])->with($notification);
+        return redirect()->route('dosen.uts.soal', [$midId])->with($notification);
     }
 
     public function soalDelete($midId, $soalId)
@@ -158,7 +156,7 @@ class UtsController extends Controller
             'message' => 'Berhasil, soal ujian tengah semester berhasil dihapus',
             'alert-type' => 'success'
         );
-        return redirect()->route('teacher.uts.soal', [$midId])->with($notification);
+        return redirect()->route('dosen.uts.soal', [$midId])->with($notification);
     }
 
     public function sesiIndex($id)

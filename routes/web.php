@@ -35,6 +35,7 @@ use App\Http\Controllers\BankPenilaianKelompokController;
 use App\Http\Controllers\KuisionerKelompokKelasController;
 use App\Http\Controllers\MahasiswaKelasTersediaController;
 use App\Http\Controllers\JawabanBankSoalPembahasanController;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
@@ -167,6 +168,26 @@ Route::middleware('auth', 'isMahasiswa')->group(function () {
 });
 
 Route::middleware('auth', 'isDosen')->group(function () {
+    // API
+    Route::get("/bank_soal", function (Request $request) {
+        $levelBerfikir = $request->query('level_berfikir');
+        $kelasId = $request->query('kelasId');
+
+        $soal = BankSoalPembahasan::when($levelBerfikir ?? false, function ($query, $levelBerfikir) {
+            return $query->where('level_berfikir', $levelBerfikir);
+        })->when($kelasId ?? false, function ($query, $kelasId) {
+            return $query->where('kelas_id', $kelasId);
+        })->get();
+
+        return response()->json($soal);
+    });
+
+    Route::get('/bank_soal/{id}', function ($id) {
+        $soal = BankSoalPembahasan::findOrFail($id);
+
+        return response()->json($soal);
+    });
+
     Route::get('/dashboard', function () {
         $jumlahMahasiswa = User::where('role', 'mahasiswa')->count();
         $jumlahKelas = Kelas::count();
