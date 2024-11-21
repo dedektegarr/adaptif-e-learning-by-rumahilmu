@@ -8,6 +8,7 @@ use App\Models\Kelas;
 use App\Models\UtsPeserta;
 use App\Models\UtsSesi;
 use App\Models\UtsSoal;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -130,7 +131,7 @@ class UtsController extends Controller
     public function soalPost(Request $request, $midId)
     {
         $message = [
-            'questionSetId' => 'Pertanyaan',
+            'questionSetId' => 'Pertanyaan tidak boleh kosong',
         ];
 
         $request->validate([
@@ -161,52 +162,59 @@ class UtsController extends Controller
 
     public function sesiIndex($id)
     {
-        $sesis = UtsSesi::join('mid_exams', 'mid_exams.id', 'mid_exam_sessions.UtsId')
-            ->select('mid_exam_sessions.id as id', 'sessionName', 'mid_exam_sessions.startDate', 'mid_exam_sessions.timeBegin', 'mid_exam_sessions.timeEnd')
-            ->where('UtsId', $id)
-            ->get();
+        $sesis = UtsSesi::where('uts_id', $id)->get();
+        $sesis = $sesis->map(function ($sesi) {
+            $sesi->jumlahPeserta = $sesi->mahasiswas->count();
+            $sesi->tanggal_dilaksanakan = Carbon::parse($sesi->tanggal_dilaksanakan)->isoFormat("D MMM Y");
+            return $sesi;
+        });
+
         $midId = $id;
-        return view('teacher/uts/sesi.index', compact('sesis', 'midId'));
+
+        return view('admin/uts/sesi.index', compact('sesis', 'midId'));
     }
 
     public function sesiPost(Request $request, $midId)
     {
-        $attributes = [
+        $rules = [
+            'sessionName'   =>  'required',
+            'startDate'   =>  'required',
+            'timeBegin'   =>  'required',
+            'timeEnd'   =>  'required',
+        ];
+
+        $message = [
             'sessionName'   =>  'Sesi Ujian',
             'startDate'   =>  'Tanggal Ujian',
             'timeBegin'   =>  'Jam Mulai',
             'timeEnd'   =>  'Jam Selesai',
         ];
-        $this->validate($request, [
-            'sessionName'    =>  'required',
-            'startDate'    =>  'required',
-            'timeBegin'    =>  'required',
-            'timeEnd'    =>  'required',
-        ], $attributes);
+
+        $request->validate($rules, $message);
 
         UtsSesi::create([
-            'UtsId'     =>  $midId,
-            'sessionName' =>  $request->sessionName,
-            'startDate' =>  $request->startDate,
-            'timeBegin' =>  $request->timeBegin,
-            'timeEnd' =>  $request->timeEnd,
+            'uts_id'     =>  $midId,
+            'nama_sesi' =>  $request->sessionName,
+            'tanggal_dilaksanakan' =>  $request->startDate,
+            'waktu_mulai' =>  $request->timeBegin,
+            'waktu_selesai' =>  $request->timeEnd,
         ]);
 
         $notification = array(
             'message' => 'Berhasil, sesi ujian tengah semester berhasil ditambahkan',
             'alert-type' => 'success'
         );
-        return redirect()->route('teacher.uts.sesi', [$midId])->with($notification);
+        return redirect()->route('dosen.uts.sesi', [$midId])->with($notification);
     }
 
     public function sesiDelete($midId, $sesiId)
     {
-        UtsSesi::where('id', $sesiId)->delete();
+        UtsSesi::find($sesiId)->delete();
         $notification = array(
             'message' => 'Berhasil, sesi ujian tengah semester berhasil dihapus',
             'alert-type' => 'success'
         );
-        return redirect()->route('teacher.uts.sesi', [$midId])->with($notification);
+        return redirect()->route('dosen.uts.sesi', [$midId])->with($notification);
     }
 
     public function pesertaIndex($midId, $sesiId)
