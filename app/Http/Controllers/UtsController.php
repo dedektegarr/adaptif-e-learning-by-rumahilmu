@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BankSoalPembahasan;
 use App\Models\Uts;
 use App\Models\Kelas;
+use App\Models\KelasMahasiswa;
 use App\Models\UtsPeserta;
 use App\Models\UtsSesi;
 use App\Models\UtsSoal;
@@ -219,49 +220,48 @@ class UtsController extends Controller
 
     public function pesertaIndex($midId, $sesiId)
     {
-        $pesertas = UtsPeserta::join('users', 'users.id', 'mid_exam_participants.studentId')
-            // ->join('mid_exams_sessions', 'mid_exams_sessions.id','mid_exam_participants.sessionId')
-            ->select('mid_exam_participants.id as id', 'firstName', 'lastName')
-            ->where('sessionId', $sesiId)
-            ->get();
-        $sesi = UtsSesi::select('sessionName')->where('id', $sesiId)->first();
-        $daftar_peserta = Uts::join('courses', 'courses.id', 'mid_exams.courseId')
-            ->join('course_enrolls', 'course_enrolls.courseId', 'courses.id')
-            ->join('users', 'users.id', 'course_enrolls.userid')
-            ->select('users.id as userId', 'firstName', 'lastName')
-            ->where('mid_exams.id', $midId)
-            ->get();
-        return view('teacher/uts/sesi/peserta.index', compact('pesertas', 'sesi', 'midId', 'sesiId', 'daftar_peserta'));
+        $sesi = UtsSesi::find($sesiId);
+        $kelasId = $sesi->uts->kelas_id;
+
+        $daftar_peserta = KelasMahasiswa::where('kelas_id', $kelasId)->groupBy('mahasiswa_id')->get();
+        $pesertas = $sesi->mahasiswas;
+
+        return view('admin/uts/sesi/peserta.index', compact('pesertas', 'sesi', 'midId', 'sesiId', 'daftar_peserta'));
     }
 
     public function pesertaPost(Request $request, $midId, $sesiId)
     {
-        $attributes = [
-            'studentId'   =>  'Nama Peserta',
+        $message = [
+            'studentId'   =>  'Nama peserta tidak boleh kosong',
         ];
-        $this->validate($request, [
-            'studentId'    =>  'required',
-        ], $attributes);
+
+        $request->validate([
+            'studentId' => 'required'
+        ], $message);
 
         UtsPeserta::create([
-            'sessionId'     =>  $sesiId,
-            'studentId'     =>  $request->studentId,
+            'uts_sesi_id' =>  $sesiId,
+            'mahasiswa_id' =>  $request->studentId,
         ]);
+
 
         $notification = array(
             'message' => 'Berhasil, peserta ujian tengah semester berhasil ditambahkan',
             'alert-type' => 'success'
         );
-        return redirect()->route('teacher.uts.sesi.peserta', [$midId, $sesiId])->with($notification);
+        return redirect()->route('dosen.uts.sesi.peserta', [$midId, $sesiId])->with($notification);
     }
 
     public function pesertaDelete($midId, $sesiId, $pesertaId)
     {
-        UtsPeserta::where('id', $pesertaId)->delete();
+        $peserta = UtsPeserta::where('mahasiswa_id', $pesertaId)->where('uts_sesi_id', $sesiId)->first();
+
+        $peserta->delete();
+
         $notification = array(
             'message' => 'Berhasil, peserta ujian tengah semester berhasil dihapus',
             'alert-type' => 'success'
         );
-        return redirect()->route('teacher.uts.sesi.peserta', [$midId, $sesiId])->with($notification);
+        return redirect()->route('dosen.uts.sesi.peserta', [$midId, $sesiId])->with($notification);
     }
 }

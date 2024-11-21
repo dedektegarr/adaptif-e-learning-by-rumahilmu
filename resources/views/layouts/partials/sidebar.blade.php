@@ -128,7 +128,24 @@
             <span>Manajemen Kelas</span>
         </a>
     </li>
-    <li class="treeview {{ set_active(['dosen.uts', 'dosen.uas']) }}">
+    <li
+        class="treeview {{ set_active([
+            'dosen.uts',
+            'dosen.uts.add',
+            'dosen.uts.post',
+            'dosen.uts.edit',
+            'dosen.uts.update',
+            'dosen.uts.delete',
+            'dosen.uts.soal',
+            'dosen.uts.soal.post',
+            'dosen.uts.soal.delete',
+            'dosen.uts.sesi',
+            'dosen.uts.sesi.post',
+            'dosen.uts.sesi.delete',
+            'dosen.uts.sesi.peserta',
+            'dosen.uts.sesi.peserta.post',
+            'dosen.uts.sesi.peserta.delete',
+        ]) }}">
         <a href="#">
             <i class="fa fa-pencil"></i> <span>Manajemen Ujian</span>
             <span class="pull-right-container">
@@ -136,8 +153,25 @@
             </span>
         </a>
         <ul class="treeview-menu " style="padding-left:25px;">
-            <li class="{{ set_active(['dosen.uts', 'dosen.uts.edit']) }}"><a href="{{ route('dosen.uts') }}"><i
-                        class="fa fa-circle-o"></i>&nbsp;Ujian Tengah Semester</a>
+            <li
+                class="{{ set_active([
+                    'dosen.uts',
+                    'dosen.uts.add',
+                    'dosen.uts.post',
+                    'dosen.uts.edit',
+                    'dosen.uts.update',
+                    'dosen.uts.delete',
+                    'dosen.uts.soal',
+                    'dosen.uts.soal.post',
+                    'dosen.uts.soal.delete',
+                    'dosen.uts.sesi',
+                    'dosen.uts.sesi.post',
+                    'dosen.uts.sesi.delete',
+                    'dosen.uts.sesi.peserta',
+                    'dosen.uts.sesi.peserta.post',
+                    'dosen.uts.sesi.peserta.delete',
+                ]) }}">
+                <a href="{{ route('dosen.uts') }}"><i class="fa fa-circle-o"></i>&nbsp;Ujian Tengah Semester</a>
             </li>
             <li class="{{ set_active(['bankKuisioner', 'bankKuisioner.edit']) }}"><a
                     href="{{ route('bankKuisioner') }}"><i class="fa fa-circle-o"></i>&nbsp;Ujian Akhir Semester</a>
