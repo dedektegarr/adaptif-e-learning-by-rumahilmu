@@ -35,6 +35,7 @@ use App\Http\Controllers\BankPenilaianKelompokController;
 use App\Http\Controllers\KuisionerKelompokKelasController;
 use App\Http\Controllers\MahasiswaKelasTersediaController;
 use App\Http\Controllers\JawabanBankSoalPembahasanController;
+use App\Http\Controllers\UasController;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -400,6 +401,33 @@ Route::middleware('auth', 'isDosen')->group(function () {
                 Route::get('{midId}/sesi/{sesiId}', [UtsController::class, 'pesertaIndex'])->name('dosen.uts.sesi.peserta');
                 Route::post('{midId}/{sesiId}', [UtsController::class, 'pesertaPost'])->name('dosen.uts.sesi.peserta.post');
                 Route::delete('{midId}/delete/{sesiId}/{pesertaId}', [UtsController::class, 'pesertaDelete'])->name('dosen.uts.sesi.peserta.delete');
+            });
+        });
+    });
+
+    Route::group(['prefix'  => 'ujian_akhir_semester'], function () {
+        Route::get('/', [UasController::class, 'index'])->name('dosen.uas');
+        Route::get('/add', [UasController::class, 'add'])->name('dosen.uas.add');
+        Route::post('/', [UasController::class, 'post'])->name('dosen.uas.post');
+        Route::get('/{id}/edit', [UasController::class, 'edit'])->name('dosen.uas.edit');
+        Route::patch('{id}/update', [UasController::class, 'update'])->name('dosen.uas.update');
+        Route::delete('{id}/delete', [UasController::class, 'delete'])->name('dosen.uas.delete');
+
+        Route::group(['prefix'  => 'tambah_soal'], function () {
+            Route::get('/{midId}', [UasController::class, 'soalIndex'])->name('dosen.uas.soal');
+            Route::post('{midId}/', [UasController::class, 'soalPost'])->name('dosen.uas.soal.post');
+            Route::delete('{midId}/delete/{soalId}', [UasController::class, 'soalDelete'])->name('dosen.uas.soal.delete');
+        });
+
+        Route::group(['prefix'  => 'tambah_sesi_ujian'], function () {
+            Route::get('/{midId}', [UasController::class, 'sesiIndex'])->name('dosen.uas.sesi');
+            Route::post('{midId}/', [UasController::class, 'sesiPost'])->name('dosen.uas.sesi.post');
+            Route::delete('{midId}/delete/{sesiId}', [UasController::class, 'sesiDelete'])->name('dosen.uas.sesi.delete');
+
+            Route::group(['prefix'  => 'tambah_peserta'], function () {
+                Route::get('{midId}/sesi/{sesiId}', [UasController::class, 'pesertaIndex'])->name('dosen.uas.sesi.peserta');
+                Route::post('{midId}/{sesiId}', [UasController::class, 'pesertaPost'])->name('dosen.uas.sesi.peserta.post');
+                Route::delete('{midId}/delete/{sesiId}/{pesertaId}', [UasController::class, 'pesertaDelete'])->name('dosen.uas.sesi.peserta.delete');
             });
         });
     });

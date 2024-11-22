@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('subTitle', 'UTS')
-@section('page', 'Ujian Tengah Semester')
+@section('subTitle', 'UAS')
+@section('page', 'Ujian Akhir Semester')
 @section('login_as')
     Selamat Datang,
 @endsection
@@ -15,10 +15,10 @@
         <div class="col-md-12">
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><i class="fa fa-book"></i>&nbsp;Manajemen Ujian Tengah Semester</h3>
+                    <h3 class="box-title"><i class="fa fa-book"></i>&nbsp;Manajemen Ujian Akhir Semester</h3>
                     <div class="pull-right">
-                        <a href="{{ route('dosen.uts.add') }}" class="btn btn-primary btn-sm btn-flat"><i
-                                class="fa fa-plus"></i>&nbsp; Tambah UTS</a>
+                        <a href="{{ route('dosen.uas.add') }}" class="btn btn-primary btn-sm btn-flat"><i
+                                class="fa fa-plus"></i>&nbsp; Tambah UAS</a>
                     </div>
                 </div>
                 <div class="box-body">
@@ -55,12 +55,12 @@
                                     @php
                                         $no = 1;
                                     @endphp
-                                    @foreach ($mid_exams as $exam)
+                                    @foreach ($final_exams as $exam)
                                         @php
-                                            $jumlah_soal = \App\Models\UtsSoal::where('uts_id', $exam->id)
+                                            $jumlah_soal = \App\Models\UasSoal::where('uas_id', $exam->id)
                                                 ->get()
                                                 ->count();
-                                            $jumlah_sesi = \App\Models\UtsSesi::where('uts_id', $exam->id)
+                                            $jumlah_sesi = \App\Models\UasSesi::where('uas_id', $exam->id)
                                                 ->get()
                                                 ->count();
                                         @endphp
@@ -75,28 +75,28 @@
                                             <td> {{ $exam->waktu_mulai }} </td>
                                             <td> {{ $exam->waktu_selesai }}</td>
                                             <td style="text-align: center">
-                                                <a href="{{ route('dosen.uts.soal', [$exam->id]) }}"
+                                                <a href="{{ route('dosen.uas.soal', [$exam->id]) }}"
                                                     class="btn btn-primary btn-sm btn-flat">{{ $jumlah_soal }}</a>
                                             </td>
                                             <td style="text-align: center">
-                                                <a href="{{ route('dosen.uts.sesi', [$exam->id]) }}"
+                                                <a href="{{ route('dosen.uas.sesi', [$exam->id]) }}"
                                                     class="btn btn-success btn-sm btn-flat">{{ $jumlah_sesi }}</a>
                                             </td>
                                             <td>
                                                 <table>
                                                     <tr>
                                                         <td>
-                                                            <a href="{{ route('dosen.uts.edit', [$exam->id]) }}"
+                                                            <a href="{{ route('dosen.uas.edit', [$exam->id]) }}"
                                                                 class="btn btn-primary btn-sm btn-flat"><i
                                                                     class="fa fa-edit"></i>&nbsp; Edit</a>
                                                         </td>
                                                         <td>
-                                                            <form action="{{ route('dosen.uts.delete', [$exam->id]) }}"
+                                                            <form action="{{ route('dosen.uas.delete', [$exam->id]) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit"
-                                                                    onclick="return confirm('Anda yakin ingin menghapus UTS ini?')"
+                                                                    onclick="return confirm('Anda yakin ingin menghapus UAS ini?')"
                                                                     class="btn btn-danger btn-sm btn-flat"><i
                                                                         class="fa fa-trash"></i>&nbsp; Hapus</button>
                                                             </form>

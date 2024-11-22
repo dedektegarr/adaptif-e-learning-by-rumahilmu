@@ -145,6 +145,21 @@
             'dosen.uts.sesi.peserta',
             'dosen.uts.sesi.peserta.post',
             'dosen.uts.sesi.peserta.delete',
+            'dosen.uas',
+            'dosen.uas.add',
+            'dosen.uas.post',
+            'dosen.uas.edit',
+            'dosen.uas.update',
+            'dosen.uas.delete',
+            'dosen.uas.soal',
+            'dosen.uas.soal.post',
+            'dosen.uas.soal.delete',
+            'dosen.uas.sesi',
+            'dosen.uas.sesi.post',
+            'dosen.uas.sesi.delete',
+            'dosen.uas.sesi.peserta',
+            'dosen.uas.sesi.peserta.post',
+            'dosen.uas.sesi.peserta.delete',
         ]) }}">
         <a href="#">
             <i class="fa fa-pencil"></i> <span>Manajemen Ujian</span>
@@ -173,8 +188,25 @@
                 ]) }}">
                 <a href="{{ route('dosen.uts') }}"><i class="fa fa-circle-o"></i>&nbsp;Ujian Tengah Semester</a>
             </li>
-            <li class="{{ set_active(['bankKuisioner', 'bankKuisioner.edit']) }}"><a
-                    href="{{ route('bankKuisioner') }}"><i class="fa fa-circle-o"></i>&nbsp;Ujian Akhir Semester</a>
+            <li
+                class="{{ set_active([
+                    'dosen.uas',
+                    'dosen.uas.add',
+                    'dosen.uas.post',
+                    'dosen.uas.edit',
+                    'dosen.uas.update',
+                    'dosen.uas.delete',
+                    'dosen.uas.soal',
+                    'dosen.uas.soal.post',
+                    'dosen.uas.soal.delete',
+                    'dosen.uas.sesi',
+                    'dosen.uas.sesi.post',
+                    'dosen.uas.sesi.delete',
+                    'dosen.uas.sesi.peserta',
+                    'dosen.uas.sesi.peserta.post',
+                    'dosen.uas.sesi.peserta.delete',
+                ]) }}">
+                <a href="{{ route('dosen.uas') }}"><i class="fa fa-circle-o"></i>&nbsp;Ujian Akhir Semester</a>
             </li>
         </ul>
     </li>
