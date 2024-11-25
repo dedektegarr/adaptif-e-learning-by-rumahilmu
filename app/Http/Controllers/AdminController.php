@@ -4,22 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
     // === ADMINISTRATOR
-    public function indexAdministrator()
+    public function indexAdministrator(Request $request)
     {
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengakses')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengakses halaman administrator');
+
         $users = User::where('role', 'administrator')->get();
         return view('administrator/administrator.index', compact('users'));
     }
 
-    public function addAdministrator()
+    public function addAdministrator(Request $request)
     {
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengakses')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengakses halaman tambah administrator');
+
         return view('administrator/administrator.add');
     }
 
-    public function postAdministrator(Request $request)
+    public function postAdministrator(Request $request, User $user)
     {
         $rules = [
             "username" => 'required:unique:users',
@@ -48,6 +61,13 @@ class AdminController extends Controller
             'role' =>  'administrator',
         ]);
 
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->performedOn($user)
+            ->event('menambah')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' menambah data administrator');
+
         $notification = array(
             'message' => 'Berhasil, data user berhasil ditambahkan!',
             'alert-type' => 'success'
@@ -55,9 +75,16 @@ class AdminController extends Controller
         return redirect()->route('administrator.administrator')->with($notification);
     }
 
-    public function editAdministrator($id)
+    public function editAdministrator(Request $request, $id)
     {
         $data = User::where('id', $id)->first();
+
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengakses')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengakses halaman edit administrator ' . $data->nama_lengkap);
+
         return view('administrator/administrator.edit', compact('data'));
     }
 
@@ -87,6 +114,12 @@ class AdminController extends Controller
 
         $user->update($request->all());
 
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengubah')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengubah data administrator ' . $user->nama_lengkap);
+
         $notification = array(
             'message' => 'Berhasil, data user berhasil ditambahkan!',
             'alert-type' => 'success'
@@ -94,10 +127,17 @@ class AdminController extends Controller
         return redirect()->route('administrator.administrator')->with($notification);
     }
 
-    public function deleteAdministrator($id)
+    public function deleteAdministrator(Request $request, $id)
     {
         $user = User::find($id);
+        $userName = $user->nama_lengkap;
         $user->delete();
+
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('menghapus')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' menghapus data administrator ' . $userName);
 
         $notification = array(
             'message' => 'Berhasil, data user berhasil dihapus!',
@@ -122,22 +162,40 @@ class AdminController extends Controller
             $redirectPath = "administrator.student";
         }
 
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengubah')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengubah password administrator ' . $user->nama_lengkap);
+
         return redirect()->route($redirectPath)->with(['success' =>  'Password berhasil di generate !']);
     }
 
     // === DOSEN ===
-    public function indexteacher()
+    public function indexteacher(Request $request)
     {
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengakses')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengakses halaman dosen');
+
         $users = User::where('role', 'dosen')->get();
         return view('administrator/teacher.index', compact('users'));
     }
 
-    public function addTeacher()
+    public function addTeacher(Request $request)
     {
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengakses')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengakses halaman tambah dosen ');
+
         return view('administrator/teacher.add');
     }
 
-    public function postTeacher(Request $request)
+    public function postTeacher(Request $request, User $user)
     {
         $rules = [
             "username" => 'required:unique:users',
@@ -166,6 +224,13 @@ class AdminController extends Controller
             'role' =>  'dosen',
         ]);
 
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->performedOn($user)
+            ->event('menambah')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' menambah data dosen ');
+
         $notification = array(
             'message' => 'Berhasil, data user berhasil ditambahkan!',
             'alert-type' => 'success'
@@ -173,9 +238,16 @@ class AdminController extends Controller
         return redirect()->route('administrator.teacher')->with($notification);
     }
 
-    public function editTeacher($id)
+    public function editTeacher(Request $request, $id)
     {
         $data = User::where('id', $id)->first();
+
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengakses')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengakses halaman edit dosen ' . $data->nama_lengkap);
+
         return view('administrator/teacher.edit', compact('data'));
     }
 
@@ -205,6 +277,12 @@ class AdminController extends Controller
 
         $user->update($request->all());
 
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengubah')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengubah data dosen ' . $user->nama_lengkap);
+
         $notification = array(
             'message' => 'Berhasil, data user berhasil ditambahkan!',
             'alert-type' => 'success'
@@ -212,10 +290,17 @@ class AdminController extends Controller
         return redirect()->route('administrator.teacher')->with($notification);
     }
 
-    public function deleteTeacher($id)
+    public function deleteTeacher(Request $request, $id)
     {
         $user = User::find($id);
+        $userName = $user->nama_lengkap;
         $user->delete();
+
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('menghapus')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' menghapus data dosen ' . $userName);
 
         $notification = array(
             'message' => 'Berhasil, data user berhasil dihapus!',
@@ -225,18 +310,30 @@ class AdminController extends Controller
     }
 
     // === MAHASISWA ===
-    public function indexStudent()
+    public function indexStudent(Request $request)
     {
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengakses')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengakses halaman mahasiswa');
+
         $users = User::where('role', 'mahasiswa')->latest()->get();
         return view('administrator/student.index', compact('users'));
     }
 
-    public function addStudent()
+    public function addStudent(Request $request)
     {
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengakses')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengakses halaman tambah mahasiswa ');
+
         return view('administrator/student.add');
     }
 
-    public function postStudent(Request $request)
+    public function postStudent(Request $request, User $user)
     {
         $rules = [
             "username" => 'required:unique:users',
@@ -271,6 +368,13 @@ class AdminController extends Controller
             'role' =>  'mahasiswa',
         ]);
 
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->performedOn($user)
+            ->event('menambah')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' menambah data mahasiswa ');
+
         $notification = array(
             'message' => 'Berhasil, data user berhasil ditambahkan!',
             'alert-type' => 'success'
@@ -278,9 +382,16 @@ class AdminController extends Controller
         return redirect()->route('administrator.student')->with($notification);
     }
 
-    public function editStudent($id)
+    public function editStudent(Request $request, $id)
     {
         $data = User::where('id', $id)->first();
+
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengakses')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengakses halaman edit mahasiswa ' . $data->nama_lengkap);
+
         return view('administrator/student.edit', compact('data'));
     }
 
@@ -310,6 +421,12 @@ class AdminController extends Controller
 
         $user->update($request->all());
 
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('mengubah')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' mengubah data mahasiswa ' . $user->nama_lengkap);
+
         $notification = array(
             'message' => 'Berhasil, data user berhasil ditambahkan!',
             'alert-type' => 'success'
@@ -317,10 +434,17 @@ class AdminController extends Controller
         return redirect()->route('administrator.student')->with($notification);
     }
 
-    public function deleteStudent($id)
+    public function deleteStudent(Request $request, $id)
     {
         $user = User::find($id);
+        $userName = $user->nama_lengkap;
         $user->delete();
+
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->event('menghapus')
+            ->withProperties(['url' => $request->fullUrl()])
+            ->log(Auth::user()->nama_user . ' menghapus data mahasiswa ' . $userName);
 
         $notification = array(
             'message' => 'Berhasil, data user berhasil dihapus!',

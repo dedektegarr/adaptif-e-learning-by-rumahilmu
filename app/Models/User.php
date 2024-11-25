@@ -12,7 +12,7 @@ use Spatie\Activitylog\Models\Activity;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable;
 
     public function getProfileCompletionPercentage()
     {
@@ -42,7 +42,7 @@ class User extends Authenticatable
     public function utsSesis()
     {
         return $this->belongsToMany(UtsSesi::class, 'uts_pesertas', 'mahasiswa_id', 'uts_sesi_id')
-                    ->withTimestamps(); // Jika ada timestamps
+            ->withTimestamps(); // Jika ada timestamps
     }
 
     public function mengampu(): HasMany
@@ -53,15 +53,15 @@ class User extends Authenticatable
     public function kelas()
     {
         return $this->belongsToMany(Kelas::class, 'kelas_mahasiswas', 'mahasiswa_id', 'kelas_id')
-                    ->using(KelasMahasiswa::class);
+            ->using(KelasMahasiswa::class);
     }
 
     public function materis()
     {
         return $this->belongsToMany(Materi::class, 'kelas_mahasiswas')
-                    ->withPivot('id','critical_status', 'sumber_materi')
-                    ->withTimestamps()
-                    ->using(KelasMahasiswaDetail::class); // menggunakan custom pivot model
+            ->withPivot('id', 'critical_status', 'sumber_materi')
+            ->withTimestamps()
+            ->using(KelasMahasiswaDetail::class); // menggunakan custom pivot model
     }
 
     /**

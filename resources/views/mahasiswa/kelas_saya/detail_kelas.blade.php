@@ -21,14 +21,17 @@
                     <div class="d-flex flex-center flex-column mb-5">
                         <!--begin::Avatar-->
                         <div class="symbol symbol-150px symbol-circle mb-7">
-                        <img src="{{ asset($kelas->pengampu->foto ? 'storage/' . $kelas->pengampu->foto : 'storage/fotos/endina.jpeg') }}" alt="foto profil" />
+                            <img src="{{ asset($kelas->pengampu->foto ? 'storage/' . $kelas->pengampu->foto : 'storage/fotos/endina.jpeg') }}"
+                                alt="foto profil" />
                         </div>
                         <!--end::Avatar-->
                         <!--begin::Name-->
-                        <a href="#" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1 text-center">{{ $kelas->pengampu->nama_lengkap }}</a>
+                        <a href="#"
+                            class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1 text-center">{{ $kelas->pengampu->nama_lengkap }}</a>
                         <!--end::Name-->
                         <!--begin::Email-->
-                        <a href="#" class="fs-5 fw-semibold text-muted text-hover-primary mb-6">{{ $kelas->pengampu->username }}</a>
+                        <a href="#"
+                            class="fs-5 fw-semibold text-muted text-hover-primary mb-6">{{ $kelas->pengampu->username }}</a>
                         <!--end::Email-->
                     </div>
                     <!--end::Summary-->
@@ -56,12 +59,14 @@
 
                         <!--begin::Details item-->
                         <div class="fw-bold mt-5">Tanggal Mulai</div>
-                        <div class="text-gray-600">{{ \Carbon\Carbon::parse($kelas->waktu_mulai)->translatedFormat('l, d F Y') }}</div>
+                        <div class="text-gray-600">
+                            {{ \Carbon\Carbon::parse($kelas->waktu_mulai)->translatedFormat('l, d F Y') }}</div>
                         <!--begin::Details item-->
 
                         <!--begin::Details item-->
                         <div class="fw-bold mt-5">Tanggal Selesai</div>
-                        <div class="text-gray-600">{{ \Carbon\Carbon::parse($kelas->waktu_selesai)->translatedFormat('l, d F Y') }}</div>
+                        <div class="text-gray-600">
+                            {{ \Carbon\Carbon::parse($kelas->waktu_selesai)->translatedFormat('l, d F Y') }}</div>
                         <!--begin::Details item-->
 
                         <!--begin::Details item-->
@@ -91,7 +96,8 @@
             <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-8">
                 <!--begin:::Tab item-->
                 <li class="nav-item">
-                    <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_ecommerce_customer_overview">Capaian Lulusan, Topik dan Materi</a>
+                    <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab"
+                        href="#kt_ecommerce_customer_overview">Capaian Lulusan, Topik dan Materi</a>
                 </li>
                 <!--end:::Tab item-->
             </ul>
@@ -112,13 +118,15 @@
                                     </div>
                                     <!--end::Card title-->
                                     <div class="card-toolbar">
-                                        <a href="{{ route('mahasiswa.kelas_saya.uts',[$kelas->id]) }}" class="btn btn-sm btn-flex btn-light-primary me-2">
+                                        <a href="{{ route('mahasiswa.kelas_saya.uts', [$kelas->id]) }}"
+                                            class="btn btn-sm btn-flex btn-light-primary me-2">
                                             <i class="ki-duotone ki-book fs-3">
                                                 <span class="path1"></span>
                                                 <span class="path2"></span>
                                             </i>UTS
                                         </a>
-                                        <a class="btn btn-sm btn-flex btn-light-info">
+                                        <a href="{{ route('mahasiswa.kelas_saya.uas', [$kelas->id]) }}"
+                                            class="btn btn-sm btn-flex btn-light-info">
                                             <i class="ki-duotone ki-book fs-3">
                                                 <span class="path1"></span>
                                                 <span class="path2"></span>
@@ -137,8 +145,8 @@
                                     @endif
                                     @foreach ($kelas->capaianLulusans as $cpl)
                                         <div class="fw-bold fs-4">{{ $cpl->capaian_lulusan }}
-                                        <div class="fs-6 fw-normal text-muted mt-3">{!! $cpl->keterangan !!}</div>
-                                    </div>
+                                            <div class="fs-6 fw-normal text-muted mt-3">{!! $cpl->keterangan !!}</div>
+                                        </div>
                                     @endforeach
                                 </div>
                                 <!--end::Card body-->
@@ -171,14 +179,18 @@
                                         <!--begin::Users-->
                                         <div class="symbol-group symbol-hover flex-nowrap flex-grow-1 pe-2">
                                             @foreach ($kelas->mahasiswas->take(10) as $mahasiswa)
-                                                <div class="symbol symbol-circle symbol-25px" data-bs-toggle="tooltip" title="{{ $mahasiswa->nama_lengkap }}">
-                                                    <img src="{{ $mahasiswa->foto ? asset('storage/' . $mahasiswa->foto) : asset('storage/fotos/profil.jpg') }}" alt="{{ $mahasiswa->nama_lengkap }}" />
+                                                <div class="symbol symbol-circle symbol-25px" data-bs-toggle="tooltip"
+                                                    title="{{ $mahasiswa->nama_lengkap }}">
+                                                    <img src="{{ $mahasiswa->foto ? asset('storage/' . $mahasiswa->foto) : asset('storage/fotos/profil.jpg') }}"
+                                                        alt="{{ $mahasiswa->nama_lengkap }}" />
                                                 </div>
                                             @endforeach
 
                                             @if ($kelas->mahasiswas->count() > 10)
                                                 <div class="symbol symbol-circle symbol-25px">
-                                                    <div class="d-flex justify-content-center align-items-center w-100 h-100 bg-light text-dark fw-bold" data-bs-toggle="tooltip" title="Dan {{ $kelas->mahasiswas->count() - 10 }} lainnya">
+                                                    <div class="d-flex justify-content-center align-items-center w-100 h-100 bg-light text-dark fw-bold"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Dan {{ $kelas->mahasiswas->count() - 10 }} lainnya">
                                                         &nbsp;<i class="fa fa-info-circle"></i>
                                                     </div>
                                                 </div>
@@ -197,7 +209,8 @@
                             <!--begin::Tab Content-->
                             <div class="tab-content">
                                 <!--begin::Tab panel-->
-                                <div id="kt_activity_today" class="card-body p-0 tab-pane fade show active" role="tabpanel" aria-labelledby="kt_activity_today_tab">
+                                <div id="kt_activity_today" class="card-body p-0 tab-pane fade show active" role="tabpanel"
+                                    aria-labelledby="kt_activity_today_tab">
                                     <!--begin::Timeline-->
                                     <div class="timeline timeline-border-dashed">
                                         @foreach ($kelas->topikPembahasanKelas as $loopIndex => $topik)
@@ -232,34 +245,47 @@
                                                     @foreach ($topik->materis as $materi)
                                                         <!--begin::Timeline details-->
                                                         @php
-                                                            $aktif = \App\Models\KelasMahasiswaDetail::join('kelas_mahasiswas','kelas_mahasiswas.id','kelas_mahasiswa_details.kelas_mahasiswa_id')
+                                                            $aktif = \App\Models\KelasMahasiswaDetail::join(
+                                                                'kelas_mahasiswas',
+                                                                'kelas_mahasiswas.id',
+                                                                'kelas_mahasiswa_details.kelas_mahasiswa_id',
+                                                            )
                                                                 ->where('materi_id', $materi->id)
-                                                                ->where('mahasiswa_id',auth()->user()->id)
+                                                                ->where('mahasiswa_id', auth()->user()->id)
                                                                 ->first();
                                                         @endphp
                                                         <div class="overflow-auto pb-1">
                                                             <!--begin::Record-->
-                                                            <div class="d-flex align-items-center border border-dashed border-gray-300 rounded min-w-750px px-7 py-1 mb-2">
+                                                            <div
+                                                                class="d-flex align-items-center border border-dashed border-gray-300 rounded min-w-750px px-7 py-1 mb-2">
                                                                 <!--begin::Title-->
-                                                                <a href="" class="fs-6 text-gray-900 text-hover-primary w-375px min-w-200px">{{ $materi->nama_materi }}</a>
+                                                                <a href=""
+                                                                    class="fs-6 text-gray-900 text-hover-primary w-375px min-w-200px">{{ $materi->nama_materi }}</a>
                                                                 <!--end::Title-->
                                                                 <!--begin::Progress-->
                                                                 <div class="min-w-125px pe-2">
                                                                     @if ($materi->critical_status == 0)
-                                                                        <span class="badge badge-light-warning">Tingkat {{ ucfirst('dasar') }}</span>
+                                                                        <span class="badge badge-light-warning">Tingkat
+                                                                            {{ ucfirst('dasar') }}</span>
                                                                     @elseif ($materi->critical_status == 1)
-                                                                        <span class="badge badge-light-success">Tingkat {{ ucfirst('menengah') }}</span>
+                                                                        <span class="badge badge-light-success">Tingkat
+                                                                            {{ ucfirst('menengah') }}</span>
                                                                     @elseif ($materi->critical_status == 2)
-                                                                        <span class="badge badge-light-danger">Tingkat {{ ucfirst('lanjut') }}</span>
+                                                                        <span class="badge badge-light-danger">Tingkat
+                                                                            {{ ucfirst('lanjut') }}</span>
                                                                     @endif
                                                                 </div>
                                                                 <!--end::Progress-->
 
                                                                 <!-- Conditionally display the button based on the presence of $aktif -->
                                                                 @if ($aktif)
-                                                                    <a href="{{ route('mahasiswa.kelas_saya.detail_materi',[$kelas->id, $materi->id]) }}" class="btn btn-bg-primary text-white btn-active-color-primary btn-sm ms-20">Detail Materi</a>
+                                                                    <a href="{{ route('mahasiswa.kelas_saya.detail_materi', [$kelas->id, $materi->id]) }}"
+                                                                        class="btn btn-bg-primary text-white btn-active-color-primary btn-sm ms-20">Detail
+                                                                        Materi</a>
                                                                 @else
-                                                                    <a class="btn btn-bg-danger disabled text-white btn-active-color-primary btn-sm ms-20">Detail Materi</a>
+                                                                    <a
+                                                                        class="btn btn-bg-danger disabled text-white btn-active-color-primary btn-sm ms-20">Detail
+                                                                        Materi</a>
                                                                 @endif
                                                             </div>
                                                             <!--end::Record-->
@@ -289,13 +315,12 @@
         <!--end::Content-->
     </div>
     <!--end::Layout-->
-
 @endsection
 
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            @if(session('error'))
+            @if (session('error'))
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
@@ -305,7 +330,7 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            @if(session('success'))
+            @if (session('success'))
                 Swal.fire({
                     icon: 'success',
                     title: 'Perhatian',

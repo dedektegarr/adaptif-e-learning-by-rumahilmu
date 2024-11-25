@@ -26,6 +26,9 @@ use App\Models\RiwayatFuzzy;
 use App\Models\TopikPembahasanKelas;
 use App\Models\TugasIndividuMateri;
 use App\Models\TugasKelompokMateri;
+use App\Models\Uas;
+use App\Models\UasNilai;
+use App\Models\UasPeserta;
 use App\Models\User;
 use App\Models\Uts;
 use App\Models\UtsNilai;
@@ -213,6 +216,148 @@ class MahasiswaKelasSayaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Jawaban UTS berhasil disimpan!',
+            'redirect_url' => route('mahasiswa.kelas_saya.detail_kelas', [$kelas->id]),
+        ]);
+    }
+
+    public function uasKelas(Request $request, Kelas $kelas)
+    {
+        $peserta = UasPeserta::with(['uasSesi.uas' => function ($query) use ($kelas) {
+            $query->where('kelas_id', $kelas->id)
+                ->with('bankSoalPembahasans.jawabans');
+        }])
+            ->where('mahasiswa_id', Auth::user()->id)
+            ->whereHas('uasSesi.uas', function ($query) use ($kelas) {
+                $query->where('kelas_id', $kelas->id);
+            })
+            ->first();
+        if (!$peserta) {
+            return redirect()->route('mahasiswa.kelas_saya.detail_kelas', [$kelas->id])
+                ->with('error', 'Anda tidak terdaftar dalam sesi UAS manapun.');
+        }
+
+        $sudah = UasNilai::where('mahasiswa_id', Auth::user()->id)->where('uas_id', $peserta->uasSesi->uas->id)->count();
+        if ($sudah) {
+            return redirect()->route('mahasiswa.kelas_saya.detail_kelas', [$kelas->id])
+                ->with('success', 'Anda sudah mengerjakan UAS');
+        }
+
+        $tanggalSekarang = Carbon::now()->toDateString(); // Menghasilkan format "YYYY-MM-DD"
+        $tanggalUas = Carbon::parse($peserta->uasSesi->tanggal_dilaksanakan)->toDateString(); // Menghasilkan format "YYYY-MM-DD"
+
+        // Parsing waktu mulai dan selesai dari format AM/PM ke Carbon
+        $waktuMulai = Carbon::createFromFormat('h:i A', $peserta->uasSesi->waktu_mulai);
+        $waktuSelesai = Carbon::createFromFormat('h:i A', $peserta->uasSesi->waktu_selesai);
+
+        $jamSekarang = Carbon::now('Asia/Jakarta')->format('H:i'); // Ganti 'Asia/Jakarta' dengan timezone yang sesuai
+
+        // Menghitung batas waktu masuk: 10 menit sebelum UAS dimulai dan 1 menit setelah dimulai
+        $batasWaktuMasuk = $waktuMulai->copy()->subMinutes(10);
+        $batasWaktuTerakhir = $waktuSelesai->copy()->addMinute(2);
+
+        // Jika ingin tetap dalam format 24 jam, cukup format pada saat diperlukan
+        $waktuMulaiFormatted = $waktuMulai->format('H:i');
+        $waktuSelesaiFormatted = $waktuSelesai->format('H:i');
+        $batasWaktuMasukFormatted = $batasWaktuMasuk->format('H:i');
+        $batasWaktuTerakhirFormatted = $batasWaktuTerakhir->format('H:i');
+        function buatPesanUas($tanggalUas, $waktuMulaiFormatted, $waktuSelesaiFormatted)
+        {
+            return 'UAS akan dilaksanakan pada tanggal ' . Carbon::parse($tanggalUas)->translatedFormat('l, d F Y') .
+                ' dari pukul ' . $waktuMulaiFormatted . ' sampai ' . $waktuSelesaiFormatted . '.';
+        }
+        if ($tanggalSekarang < $tanggalUas) {
+            // Jika tanggal sekarang kurang dari tanggal UAS
+            return redirect()->route('mahasiswa.kelas_saya.detail_kelas', [$kelas->id])
+                ->with('error', buatPesanUas($tanggalUas, $waktuMulaiFormatted, $waktuSelesaiFormatted) . '</br>' .
+                    'Anda hanya bisa masuk ke halaman UAS 10 menit sebelum dimulai.');
+        } elseif ($tanggalSekarang > $tanggalUas) {
+            // Jika tanggal sekarang lebih dari tanggal UAS
+            return redirect()->route('mahasiswa.kelas_saya.detail_kelas', [$kelas->id])
+                ->with('error', 'UAS sudah dilaksanakan pada hari ' . Carbon::parse($tanggalUas)->translatedFormat('l, d F Y') .
+                    ' dari pukul ' . Carbon::parse($waktuMulai)->format('H:i') . ' sampai ' . Carbon::parse($waktuSelesai)->format('H:i') . '.');
+        } else {
+            if ($jamSekarang >= $batasWaktuMasukFormatted && $jamSekarang <= $waktuSelesaiFormatted) {
+                // Jika jam sekarang ada di antara batas waktu masuk dan waktu selesai
+                activity()
+                    ->causedBy(Auth::user()->id)
+                    ->performedOn($kelas)
+                    ->event('mengakses')
+                    ->withProperties(['url' => $request->fullUrl()])
+                    ->log(Auth::user()->nama_user . ' mengakses halaman uas kelas.');
+                return view('mahasiswa/kelas_saya/ujian.uas', compact('kelas', 'peserta'));
+            } elseif ($jamSekarang < $batasWaktuMasukFormatted) {
+                // Jika jam sekarang masih di bawah batas waktu masuk
+                return redirect()->route('mahasiswa.kelas_saya.detail_kelas', [$kelas->id])
+                    ->with('error', buatPesan($tanggalUas, $waktuMulaiFormatted, $waktuSelesaiFormatted) .
+                        '<br>Anda hanya bisa masuk ke halaman UAS 10 menit sebelum dimulai.');
+            } elseif ($jamSekarang > $waktuSelesaiFormatted) {
+                // Jika jam sekarang masih di bawah batas waktu masuk
+                return redirect()->route('mahasiswa.kelas_saya.detail_kelas', [$kelas->id])
+                    ->with('error', 'UAS sudah dilaksanakan pada hari ' . Carbon::parse($tanggalUas)->translatedFormat('l, d F Y') .
+                        ' dari pukul ' . Carbon::parse($waktuMulai)->format('H:i') . ' sampai ' . Carbon::parse($waktuSelesai)->format('H:i') . '.');
+            }
+        }
+
+        // return view('mahasiswa/kelas_saya/ujian.uts',compact('kelas','peserta'));
+    }
+
+    public function uasKelasPost(Request $request, Kelas $kelas)
+    {
+        $soalUas = Uas::with(['bankSoalPembahasans.jawabans'])
+            ->where('kelas_id', $kelas->id)
+            ->first();
+
+        if (!$soalUas) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Soal UAS tidak ditemukan atau waktu ujian telah berakhir.',
+            ], 404);
+        }
+
+        $nilais = [];
+        $isTimeUp = $request->input('is_time_up') === 'true';
+
+        foreach ($soalUas->bankSoalPembahasans as $index => $soalPembahasan) {
+            $jawaban_id = $request->input("jawaban_{$index}");
+            $alasan = $request->input("alasan_{$index}");
+
+            // Jika waktu habis dan jawaban tidak diisi, isi dengan nilai default
+            if ($isTimeUp && !$jawaban_id) {
+                $jawaban_id = null;
+                $nilai = 0;
+            } else {
+                $jawabanBenar = JawabanKuisMateri::where('bank_soal_pembahasan_id', $soalPembahasan->id)
+                    ->where('status_jawaban', true)
+                    ->first();
+
+                $nilai = ($jawaban_id == $jawabanBenar->id) ? 1 : 0;
+            }
+
+            $nilais[] = [
+                'uas_id' => $soalUas->id,
+                'mahasiswa_id' => Auth::user()->id,
+                'bank_soal_pembahasan_id' => $soalPembahasan->id,
+                'jawaban_id' => $jawaban_id,
+                'nilai' => $nilai,
+                'alasan' => $alasan,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        activity()
+            ->causedBy(Auth::user()->id)
+            ->performedOn($kelas)
+            ->event('menyimpan')
+            ->withProperties(['url' => $request->fullUrl(), 'properties' =>    $nilais])
+            ->log(Auth::user()->nama_user . ' menyimpan jawaban uas kelas.');
+
+
+        UasNilai::insert($nilais);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jawaban UAS berhasil disimpan!',
             'redirect_url' => route('mahasiswa.kelas_saya.detail_kelas', [$kelas->id]),
         ]);
     }

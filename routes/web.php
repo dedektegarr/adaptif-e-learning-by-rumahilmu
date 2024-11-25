@@ -37,6 +37,7 @@ use App\Http\Controllers\MahasiswaKelasTersediaController;
 use App\Http\Controllers\JawabanBankSoalPembahasanController;
 use App\Http\Controllers\UasController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
@@ -66,7 +67,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth', 'isAdmin')->group(function () {
     Route::group(['prefix' => "/admin"], function () {
-        Route::get('/dashboard', function () {
+        Route::get('/dashboard', function (Request $request) {
             $jumlahMahasiswa = User::where('role', 'mahasiswa')->count();
             $jumlahKelas = Kelas::count();
             $jumlahBankSoal = BankSoalPembahasan::count();
@@ -75,6 +76,12 @@ Route::middleware('auth', 'isAdmin')->group(function () {
             $jumlahRubrikPenilaian = RubrikPenilaian::count();
             $jumlahKuisioner = BankKuisioner::count();
             $jumlahJenisKuisioner = JenisKuisioner::count();
+
+            activity()
+                ->causedBy(Auth::user()->id)
+                ->event('mengakses')
+                ->withProperties(['url' => $request->fullUrl()])
+                ->log(Auth::user()->nama_user . ' mengakses halaman dashboard admin');
 
             return view('administrator/dashboard', compact(
                 'jumlahMahasiswa',
@@ -135,6 +142,9 @@ Route::middleware('auth', 'isMahasiswa')->group(function () {
 
         Route::get('/kelas_saya/{kelas}/uts', [MahasiswaKelasSayaController::class, 'utsKelas'])->name('mahasiswa.kelas_saya.uts');
         Route::post('/kelas_saya/{kelas}/uts', [MahasiswaKelasSayaController::class, 'utsKelasPost'])->name('mahasiswa.kelas_saya.uts_post');
+
+        Route::get('/kelas_saya/{kelas}/uas', [MahasiswaKelasSayaController::class, 'uasKelas'])->name('mahasiswa.kelas_saya.uas');
+        Route::post('/kelas_saya/{kelas}/uas', [MahasiswaKelasSayaController::class, 'uasKelasPost'])->name('mahasiswa.kelas_saya.uas_post');
 
         Route::get('/kelas_saya/{kelas}/detail_materi/{materi}', [MahasiswaKelasSayaController::class, 'detailMateri'])->name('mahasiswa.kelas_saya.detail_materi');
 

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UtsPeserta extends Pivot
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'uts_pesertas'; // Nama table pivot
 
