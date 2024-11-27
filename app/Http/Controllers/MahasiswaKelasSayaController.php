@@ -1146,11 +1146,11 @@ class MahasiswaKelasSayaController extends Controller
                 $query->where('materi_id', $materi->id);
             })
             ->get();
+
         $isGenerated = false;
-        if (!$isCreated && !$isEnrolled) {
-            $isGenerated == false;
-        } else {
-            $isGenerated == true;
+
+        if ($isCreated && $isEnrolled) {
+            $isGenerated = true;
         }
 
         activity()
