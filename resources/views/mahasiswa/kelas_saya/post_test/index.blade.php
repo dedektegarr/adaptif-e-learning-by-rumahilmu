@@ -55,6 +55,10 @@
                     <button id="generateFuzzyButton" class="btn btn-primary btn-sm">
                         <i class="fa fa-refresh fa-spin"></i>&nbsp; Buka Materi Berikutnya
                     </button>
+                @else
+                    <button id="generateFuzzyButton" class="btn btn-secondary btn-sm" disabled>
+                        <i class="fa fa-check"></i>&nbsp; Materi Berikutnya Sudah Dibuka
+                    </button>
                 @endif
             @else
                 <form
