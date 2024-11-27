@@ -1238,10 +1238,6 @@ class MahasiswaKelasSayaController extends Controller
     public function generateFuzzy(Request $request, Kelas $kelas, Materi $materi)
     {
         try {
-            $topikPembahasanId = $materi->topik_pembahasan_id; // Ambil topik_pembahasan_id dari materi
-
-            $indikatorTertinggi = IndikatorPenilaian::max('skor_indikator');
-
             // Cek Tugas Individu
             // $cekTugasIndividu = PengumpulanTugasIndividu::with(['tugasIndividu'])
             //     ->where('mahasiswa_id', Auth::user()->id)
@@ -1677,6 +1673,9 @@ class MahasiswaKelasSayaController extends Controller
             //     $kode_aturan = 1214;
             // }
 
+            // $topikPembahasanId = $materi->topik_pembahasan_id; // Ambil topik_pembahasan_id dari materi
+            // $indikatorTertinggi = IndikatorPenilaian::max('skor_indikator');
+
             // Cek Post Test
             $cekPostTest = NilaiKuisMateri::with(['kuisMateri'])
                 ->where('mahasiswa_id', Auth::user()->id)
@@ -1689,6 +1688,7 @@ class MahasiswaKelasSayaController extends Controller
             // Menentukan skor dan kategori Post Test
             $skorPostTest = 0;
             $kategoriPostTest = 'Tidak Diketahui';
+            $bk = 1;
 
             if ($cekPostTest >= 8 && $cekPostTest <= 10) {
                 $skorPostTest = 3;
@@ -1714,6 +1714,8 @@ class MahasiswaKelasSayaController extends Controller
                 $critical = '2';
                 $status = "Lanjut";
             }
+
+
 
             $topikLama = Materi::with(['topikPembahasanKelas'])
                 ->where('id', $materi->id)
