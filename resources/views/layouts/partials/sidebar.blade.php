@@ -120,6 +120,7 @@
             'kelas.topikPembahasan.materi',
             'kelas.topikPembahasan.materi.detail',
             'kelas.topikPembahasan.materi.tugasKelompok',
+            'kelas.topikPembahasan.materi.tugasIndividu',
             'kelas.topikPembahasan.materi.kuis',
             'kelas.topikPembahasan.materi.soalKuis',
         ]) }}">
