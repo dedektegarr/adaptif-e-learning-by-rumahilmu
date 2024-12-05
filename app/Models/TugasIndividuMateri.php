@@ -20,11 +20,12 @@ class TugasIndividuMateri extends Model
 
     public function rubrikPenilaians()
     {
-        return $this->belongsToMany(RubrikPenilaian::class, 'rubrik_penilaian_tugas_individus','tugas_individu_materi_id','rubrik_penilaian_id')
-                    ->using(RubrikPenilaianTugasIndividu::class); // Menggunakan model pivot
+        return $this->belongsToMany(RubrikPenilaian::class, 'rubrik_penilaian_tugas_individus', 'tugas_individu_id', 'rubrik_penilaian_id')
+            ->using(RubrikPenilaianTugasIndividu::class); // Menggunakan model pivot
     }
 
-    public function pengumpulanTugasIndividus(){
-        return $this->hasMany(PengumpulanTugasIndividu::class, 'tugas_individu_id','id');
+    public function pengumpulanTugasIndividus()
+    {
+        return $this->hasMany(PengumpulanTugasIndividu::class, 'tugas_individu_id', 'id');
     }
 }

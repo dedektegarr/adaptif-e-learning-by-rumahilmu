@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Kelas;
 use App\Models\Materi;
-use App\Models\RubrikPenilaian;
-use App\Models\TopikPembahasanKelas;
-use App\Models\TugasKelompokMateri;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Models\RubrikPenilaian;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Models\TopikPembahasanKelas;
+use App\Models\TugasIndividuMateri;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
-class TugasKelompokMateriController extends Controller
+class TugasIndividuMateriController extends Controller
 {
     public function index(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
     {
-        $data = Materi::with(['tugasKelompoks' => function ($query) {
+        $data = Materi::with(['tugasIndividus' => function ($query) {
             $query->orderBy('created_at', 'desc')
                 ->with(['rubrikPenilaians' => function ($query) {
-                    $query->whereNull('rubrik_penilaian_tugas_kelompoks.deleted_at');
+                    $query->whereNull('rubrik_penilaian_tugas_individus.deleted_at');
                 }]);
         }, 'topikPembahasanKelas.kelas'])
             ->whereHas('topikPembahasanKelas', function ($query) use ($kelas) {
@@ -36,26 +37,16 @@ class TugasKelompokMateriController extends Controller
         $rubrikPenilaians = RubrikPenilaian::all();
 
         $existingRubrikIds = [];
-        foreach ($data->tugasKelompoks as $tugasKelompok) {
-            $existingRubrikIds[$tugasKelompok->id] = $tugasKelompok->rubrikPenilaians->pluck('id')->toArray();
+        foreach ($data->tugasIndividus as $tugasIndividu) {
+            $existingRubrikIds[$tugasIndividu->id] = $tugasIndividu->rubrikPenilaians->pluck('id')->toArray();
         }
 
-        return view('admin/kelas.topik_pembahasan/materi/tugas_kelompok.index', compact('data', 'rubrikPenilaians', 'existingRubrikIds'));
+        return view('admin/kelas.topik_pembahasan/materi/tugas_individu.index', compact('data', 'rubrikPenilaians', 'existingRubrikIds'));
     }
-
-    public function detail(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
-    {
-        $materi = Materi::with(['topikPembahasanKelas.kelas'])
-            ->where('id', $materi->id)
-            ->first();
-        return view('admin/kelas/topik_pembahasan/materi.detail', compact('materi'));
-    }
-
 
     public function post(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
     {
         $validator = Validator::make($request->all(), [
-            'judul_tugas' => 'required|string|max:255',
             'file_tugas' => 'required|file|mimes:pdf,doc,docx|max:2048',
             'tugas' => 'required|string',
             'jadwal' => 'required|string',
@@ -75,7 +66,7 @@ class TugasKelompokMateriController extends Controller
                 $extension = $fileMateri->getClientOriginalExtension();
 
                 $uniqueFileName = $originalName . '-' . Str::uuid() . '.' . $extension;
-                $path = $fileMateri->storeAs('file_tugas_kelompok_materi', $uniqueFileName, 'public');
+                $path = $fileMateri->storeAs('file_tugas_individu_materi', $uniqueFileName, 'public');
 
                 if ($fileMateri->isValid()) {
                     $jadwal = $request->input('jadwal');
@@ -84,9 +75,8 @@ class TugasKelompokMateriController extends Controller
                     $waktuMulai = Carbon::createFromFormat('m/d/Y h:i A', trim($jadwalMulai))->format('Y-m-d H:i:s');
                     $waktuSelesai = Carbon::createFromFormat('m/d/Y h:i A', trim($jadwalSelesai))->format('Y-m-d H:i:s');
 
-                    $simpan = TugasKelompokMateri::create([
+                    $simpan = TugasIndividuMateri::create([
                         'materi_id' =>  $materi->id,
-                        'judul_tugas' => $request->judul_tugas,
                         'file_tugas' => 'storage/' . $path,
                         'tugas' => $request->tugas,
                         'waktu_mulai' => $waktuMulai,
@@ -100,14 +90,14 @@ class TugasKelompokMateriController extends Controller
                         ->event('admin_created')
                         ->withProperties([
                             'created_fields' => $simpan,
-                            'log_name' => 'tugas kelompok pembahasan kelas'
+                            'log_name' => 'tugas individu pembahasan kelas'
                         ])
-                        ->log(Auth::user()->nama_lengkap . ' menginput data tugas kelompok pembahasan baru.');
+                        ->log(Auth::user()->nama_lengkap . ' menginput data tugas Individu pembahasan baru.');
 
                     DB::commit();
                     return response()->json([
                         'text'  =>  'Berhasil, penyimpanan data berhasil',
-                        'url'   =>  route('kelas.topikPembahasan.materi.tugasKelompok', [$kelas->id, $topikPembahasan->id, $materi->id]),
+                        'url'   =>  route('kelas.topikPembahasan.materi.tugasIndividu', [$kelas->id, $topikPembahasan->id, $materi->id]),
                     ]);
                 } else {
                     return response()->json(['error' => 0, 'text' => 'Gagal, file tidak valid.'], 422);
@@ -123,15 +113,14 @@ class TugasKelompokMateriController extends Controller
         }
     }
 
-    public function edit(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi, TugasKelompokMateri $tugasKelompok)
+    public function edit(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi, TugasIndividuMateri $tugasIndividu)
     {
-        return $tugasKelompok;
+        return $tugasIndividu;
     }
 
     public function update(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
     {
         $validator = Validator::make($request->all(), [
-            'judul_tugas' => 'required|string|max:255',
             'file_tugas' => 'file|mimes:pdf,doc,docx|max:2048',
             'tugas' => 'required|string',
             'jadwal' => 'required|string',
@@ -144,10 +133,10 @@ class TugasKelompokMateriController extends Controller
 
         DB::beginTransaction();
         try {
-            $tugasKelompok = TugasKelompokMateri::where('id', $request->tugas_kelompok_id)->first();
-            $oldData = $tugasKelompok->getOriginal();
+            $tugasIndividu = TugasIndividuMateri::where('id', $request->tugas_individu_id)->first();
+            $oldData = $tugasIndividu->getOriginal();
 
-            $filePath = $tugasKelompok->file_tugas;
+            $filePath = $tugasIndividu->file_tugas;
 
             if ($request->hasFile('file_tugas')) {
                 $fileTugas = $request->file('file_tugas');
@@ -156,7 +145,7 @@ class TugasKelompokMateriController extends Controller
                 $extension = $fileTugas->getClientOriginalExtension();
 
                 $uniqueFileName = $originalName . '-' . Str::uuid() . '.' . $extension;
-                $filePath = $fileTugas->storeAs('file_tugas_kelompok_materi', $uniqueFileName, 'public');
+                $filePath = $fileTugas->storeAs('file_tugas_individu_materi', $uniqueFileName, 'public');
 
                 if (!$fileTugas->isValid()) {
                     return response()->json(['error' => 0, 'text' => 'Gagal, file tidak valid.'], 422);
@@ -169,31 +158,30 @@ class TugasKelompokMateriController extends Controller
             $waktuMulai = \Carbon\Carbon::createFromFormat('m/d/Y h:i A', $waktuMulai)->format('Y-m-d H:i:s');
             $waktuSelesai = \Carbon\Carbon::createFromFormat('m/d/Y h:i A', $waktuSelesai)->format('Y-m-d H:i:s');
 
-            $tugasKelompok->update([
+            $tugasIndividu->update([
                 'materi_id' =>  $materi->id,
-                'judul_tugas' => $request->judul_tugas,
                 'file_tugas' => 'storage/' . $filePath,
                 'tugas' => $request->tugas,
                 'waktu_mulai' => $waktuMulai,
                 'waktu_selesai' => $waktuSelesai,
                 'status_upload' => $request->status_upload,
             ]);
-            $newData = $tugasKelompok->fresh()->toArray();
+            $newData = $tugasIndividu->fresh()->toArray();
 
             activity()
                 ->causedBy(Auth::user())
-                ->performedOn($tugasKelompok)
+                ->performedOn($tugasIndividu)
                 ->event('admin_updated')
                 ->withProperties([
                     'old_data' => $oldData, // Data lama
                     'new_data' => $newData, // Data baru
                 ])
-                ->log(Auth::user()->nama_lengkap . ' memperbarui data tugas kelompok.');
+                ->log(Auth::user()->nama_lengkap . ' memperbarui data tugas Individu.');
 
             DB::commit();
             return response()->json([
                 'text' => 'Berhasil, pembaruan data berhasil',
-                'url'  => route('kelas.topikPembahasan.materi.tugasKelompok', [$kelas->id, $topikPembahasan->id, $materi->id]),
+                'url'  => route('kelas.topikPembahasan.materi.tugasIndividu', [$kelas->id, $topikPembahasan->id, $materi->id]),
             ]);
         } catch (\Exception $e) {
             DB::rollback();
@@ -201,13 +189,13 @@ class TugasKelompokMateriController extends Controller
         }
     }
 
-    public function delete(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi, TugasKelompokMateri $tugasKelompok)
+    public function delete(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi, TugasIndividuMateri $tugasIndividu)
     {
-        $oldData = $tugasKelompok->toArray();
-        $tugasKelompok->delete();
+        $oldData = $tugasIndividu->toArray();
+        $tugasIndividu->delete();
         activity()
             ->causedBy(Auth::user())
-            ->performedOn($tugasKelompok)
+            ->performedOn($tugasIndividu)
             ->event('admin_deleted')
             ->withProperties([
                 'old_data' => $oldData, // Data lama
@@ -218,13 +206,35 @@ class TugasKelompokMateriController extends Controller
             'message' => 'Data berhasil dihapus!',
             'alert-type' => 'success'
         );
-        return redirect()->route('kelas.topikPembahasan.materi.tugasKelompok', [$kelas->id, $topikPembahasan->id, $materi->id])->with($notification);
+        return redirect()->route('kelas.topikPembahasan.materi.tugasIndividu', [$kelas->id, $topikPembahasan->id, $materi->id])->with($notification);
+    }
+
+    public function getRubrikPenilaian(Request $request)
+    {
+        $tugasIndividuId = $request->input('tugas_individu_id');
+
+        $existingRubrikIds = [];
+        $rubrikPenilaians = RubrikPenilaian::whereNull('deleted_at')->get();
+
+        if ($tugasIndividuId) {
+            $tugasIndividu = TugasIndividuMateri::with(['rubrikPenilaians' => function ($query) {
+                $query->whereNull('rubrik_penilaian_tugas_individus.deleted_at'); // Menyaring rubrik yang tidak dihapus soft delete
+            }])->find($tugasIndividuId);
+            if ($tugasIndividu) {
+                $existingRubrikIds = $tugasIndividu->rubrikPenilaians->pluck('id')->toArray();
+            }
+        }
+
+        return response()->json([
+            'existingRubrikIds' => $existingRubrikIds,
+            'rubrikPenilaians' => $rubrikPenilaians
+        ]);
     }
 
     public function tambahRubrikPenilaian(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
     {
         $validator = Validator::make($request->all(), [
-            'tugas_kelompok_id' => 'required|exists:tugas_kelompok_materis,id',
+            'tugas_individu_id' => 'required|exists:tugas_individu_materis,id',
             'rubrik_penilaian_ids' => 'array',
             'rubrik_penilaian_ids.*' => 'exists:rubrik_penilaians,id'
         ]);
@@ -233,16 +243,16 @@ class TugasKelompokMateriController extends Controller
             return response()->json(['error' => 1, 'text' => $validator->errors()->first()], 422);
         }
 
-        $tugasKelompok = TugasKelompokMateri::with(['rubrikPenilaians' => function ($query) {
-            $query->whereNull('rubrik_penilaian_tugas_kelompoks.deleted_at'); // Menyaring berdasarkan soft delete
-        }])->find($request->input('tugas_kelompok_id'));
+        $tugasIndividu = TugasIndividuMateri::with(['rubrikPenilaians' => function ($query) {
+            $query->whereNull('rubrik_penilaian_tugas_individus.deleted_at'); // Menyaring berdasarkan soft delete
+        }])->find($request->input('tugas_individu_id'));
 
-        if (!$tugasKelompok) {
-            return response()->json(['error' => 1, 'text' => 'Tugas kelompok tidak ditemukan.'], 404);
+        if (!$tugasIndividu) {
+            return response()->json(['error' => 1, 'text' => 'Tugas individu tidak ditemukan.'], 404);
         }
 
-        // Ambil ID rubrik penilaian yang ada di database untuk tugas kelompok ini
-        $existingRubrikPenilaians = $tugasKelompok->rubrikPenilaians->pluck('id')->toArray();
+        // Ambil ID rubrik penilaian yang ada di database untuk tugas individu ini
+        $existingRubrikPenilaians = $tugasIndividu->rubrikPenilaians->pluck('id')->toArray();
         // Ambil ID rubrik penilaian yang dikirim dalam permintaan
         $newRubrikPenilaians = $request->input('rubrik_penilaians', []);
         $newRubrikPenilaians = is_array($newRubrikPenilaians) ? $newRubrikPenilaians : [];
@@ -254,49 +264,26 @@ class TugasKelompokMateriController extends Controller
         $rubrikPenilaiansToAdd = array_diff($newRubrikPenilaians, $existingRubrikPenilaians);
 
         if (!empty($rubrikPenilaiansToRemove)) {
-            $tugasKelompok->rubrikPenilaians()->detach($rubrikPenilaiansToRemove);
+            $tugasIndividu->rubrikPenilaians()->detach($rubrikPenilaiansToRemove);
         }
 
         if (!empty($rubrikPenilaiansToAdd)) {
-            $tugasKelompok->rubrikPenilaians()->attach($rubrikPenilaiansToAdd);
+            $tugasIndividu->rubrikPenilaians()->attach($rubrikPenilaiansToAdd);
         }
 
         activity()
             ->causedBy(Auth::user())
-            ->performedOn($tugasKelompok)
+            ->performedOn($tugasIndividu)
             ->event('admin_updated')
             ->withProperties([
                 'added' => $rubrikPenilaiansToAdd,
                 'removed' => $rubrikPenilaiansToRemove
             ])
-            ->log(Auth::user()->nama_lengkap . ' mengupdate rubrik penilaian untuk tugas kelompok dengan ID ' . $tugasKelompok->id . '.');
+            ->log(Auth::user()->nama_lengkap . ' mengupdate rubrik penilaian untuk tugas individu dengan ID ' . $tugasIndividu->id . '.');
 
         return response()->json([
             'text' => 'Berhasil, rubrik penilaian berhasil diperbarui',
-            'url'  => route('kelas.topikPembahasan.materi.tugasKelompok', [$kelas->id, $topikPembahasan->id, $materi->id]),
-        ]);
-    }
-
-
-    public function getRubrikPenilaian(Request $request)
-    {
-        $tugasKelompokId = $request->input('tugas_kelompok_id');
-
-        $existingRubrikIds = [];
-        $rubrikPenilaians = RubrikPenilaian::whereNull('deleted_at')->get();
-
-        if ($tugasKelompokId) {
-            $tugasKelompok = TugasKelompokMateri::with(['rubrikPenilaians' => function ($query) {
-                $query->whereNull('rubrik_penilaian_tugas_kelompoks.deleted_at'); // Menyaring rubrik yang tidak dihapus soft delete
-            }])->find($tugasKelompokId);
-            if ($tugasKelompok) {
-                $existingRubrikIds = $tugasKelompok->rubrikPenilaians->pluck('id')->toArray();
-            }
-        }
-
-        return response()->json([
-            'existingRubrikIds' => $existingRubrikIds,
-            'rubrikPenilaians' => $rubrikPenilaians
+            'url'  => route('kelas.topikPembahasan.materi.tugasIndividu', [$kelas->id, $topikPembahasan->id, $materi->id]),
         ]);
     }
 }

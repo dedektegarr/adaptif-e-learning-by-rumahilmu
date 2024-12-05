@@ -35,7 +35,9 @@ use App\Http\Controllers\BankPenilaianKelompokController;
 use App\Http\Controllers\KuisionerKelompokKelasController;
 use App\Http\Controllers\MahasiswaKelasTersediaController;
 use App\Http\Controllers\JawabanBankSoalPembahasanController;
+use App\Http\Controllers\TugasIndividuMateriController;
 use App\Http\Controllers\UasController;
+use App\Models\TugasIndividuMateri;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -224,6 +226,7 @@ Route::middleware('auth', 'isDosen')->group(function () {
     Route::group(['prefix'  => 'pencarian'], function () {
         Route::get('/cari_capaian_lulusan_id', [PencarianController::class, 'cariCapaianLulusanId'])->name('cariCapaianLulusanId');
         Route::get('/getRubrikPenilaian', [TugasKelompokMateriController::class, 'getRubrikPenilaian'])->name('kelas.topikPembahasan.materi.tugasKelompok.getRubrikPenilaian');
+        Route::get('/getRubrikPenilaianIndividu', [TugasIndividuMateriController::class, 'getRubrikPenilaian'])->name('kelas.topikPembahasan.materi.tugasIndividu.getRubrikPenilaian');
         Route::get('/cari_topik', [PencarianController::class, 'cariTopik'])->name('cariTopik');
         Route::get('/cari_materi', [PencarianController::class, 'cariMateri'])->name('cariMateri');
     });
@@ -328,6 +331,15 @@ Route::middleware('auth', 'isDosen')->group(function () {
                 Route::patch('/update', [MateriKelasController::class, 'update'])->name('kelas.topikPembahasan.materi.update');
                 Route::delete('{materi}/delete', [MateriKelasController::class, 'delete'])->name('kelas.topikPembahasan.materi.delete');
                 Route::get('{materi}/detail', [MateriKelasController::class, 'detail'])->name('kelas.topikPembahasan.materi.detail');
+
+                Route::group(['prefix'  => '/{materi}/tugas_individu'], function () {
+                    Route::get('/', [TugasIndividuMateriController::class, 'index'])->name('kelas.topikPembahasan.materi.tugasIndividu');
+                    Route::post('/', [TugasIndividuMateriController::class, 'post'])->name('kelas.topikPembahasan.materi.tugasIndividu.post');
+                    Route::get('/{tugasIndividu}/edit', [TugasIndividuMateriController::class, 'edit'])->name('kelas.materi.tugasIndividu.materi.tugasIndividu.edit');
+                    Route::patch('/update', [TugasIndividuMateriController::class, 'update'])->name('kelas.topikPembahasan.materi.tugasIndividu.update');
+                    Route::delete('{tugasIndividu}/delete', [TugasIndividuMateriController::class, 'delete'])->name('kelas.topikPembahasan.materi.tugasIndividu.delete');
+                    Route::post('/tambah_rubrik_penilaian', [TugasIndividuMateriController::class, 'tambahRubrikPenilaian'])->name('kelas.topikPembahasan.materi.tugasIndividu.tambahRubrikPenilaian');
+                });
 
                 Route::group(['prefix'  => '/{materi}/tugas_kelompok'], function () {
                     Route::get('/', [TugasKelompokMateriController::class, 'index'])->name('kelas.topikPembahasan.materi.tugasKelompok');
