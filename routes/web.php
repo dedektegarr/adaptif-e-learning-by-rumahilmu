@@ -3,11 +3,14 @@
 use App\Models\User;
 use App\Models\Kelas;
 use App\Models\Materi;
+use Illuminate\Http\Request;
 use App\Models\BankKuisioner;
 use App\Models\JenisKuisioner;
 use App\Models\RubrikPenilaian;
 use App\Models\BankSoalPembahasan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UasController;
 use App\Http\Controllers\UtsController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KelasController;
@@ -29,17 +32,14 @@ use App\Http\Controllers\BankSoalPembahasanController;
 use App\Http\Controllers\IndikatorPenilaianController;
 use App\Http\Controllers\MahasiswaKelasSayaController;
 use App\Http\Controllers\CapaianLulusanKelasController;
+use App\Http\Controllers\TugasIndividuMateriController;
 use App\Http\Controllers\TugasKelompokMateriController;
 use App\Http\Controllers\TopikPembahasanKelasController;
 use App\Http\Controllers\BankPenilaianKelompokController;
 use App\Http\Controllers\KuisionerKelompokKelasController;
 use App\Http\Controllers\MahasiswaKelasTersediaController;
+use App\Http\Controllers\PengumpulanTugasIndividuController;
 use App\Http\Controllers\JawabanBankSoalPembahasanController;
-use App\Http\Controllers\TugasIndividuMateriController;
-use App\Http\Controllers\UasController;
-use App\Models\TugasIndividuMateri;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
@@ -339,6 +339,10 @@ Route::middleware('auth', 'isDosen')->group(function () {
                     Route::patch('/update', [TugasIndividuMateriController::class, 'update'])->name('kelas.topikPembahasan.materi.tugasIndividu.update');
                     Route::delete('{tugasIndividu}/delete', [TugasIndividuMateriController::class, 'delete'])->name('kelas.topikPembahasan.materi.tugasIndividu.delete');
                     Route::post('/tambah_rubrik_penilaian', [TugasIndividuMateriController::class, 'tambahRubrikPenilaian'])->name('kelas.topikPembahasan.materi.tugasIndividu.tambahRubrikPenilaian');
+
+                    Route::group(['prefix' => '/{tugasIndividu}/penilaian'], function () {
+                        Route::get('', [PengumpulanTugasIndividuController::class, 'index'])->name('kelas.topikPembahasan.materi.tugasIndividu.penilaian');
+                    });
                 });
 
                 Route::group(['prefix'  => '/{materi}/tugas_kelompok'], function () {

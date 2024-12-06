@@ -138,7 +138,8 @@
                                                     </div>
                                                 </td>
                                                 <td class="action-buttons">
-                                                    <a href="" class="btn btn-success btn btn-flat btn-sm"><i
+                                                    <a href="{{ route('kelas.topikPembahasan.materi.tugasIndividu.penilaian', [$data->topikPembahasanKelas->kelas->id, $data->topikPembahasanKelas->id, $data->id, $tugasIndividu->id]) }}"
+                                                        class="btn btn-success btn btn-flat btn-sm"><i
                                                             class="fa fa-check-circle"></i>&nbsp; Penilaian</a>
                                                     <a onclick="editKelas({{ $data->topikPembahasanKelas->kelas->id }}, {{ $data->topikPembahasanKelas->id }}, {{ $data->id }}, {{ $tugasIndividu->id }})"
                                                         class="btn btn-primary btn-sm btn-flat"><i
