@@ -81,7 +81,8 @@
             <!-- About Me Box -->
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><i class="fa fa-info-circle"></i>&nbsp;Pengumpulan Tugas Individu Mahasiswa</h3>
+                    <h3 class="box-title"><i class="fa fa-info-circle"></i>&nbsp;Pengumpulan Tugas Individu Mahasiswa
+                        ({{ $tugasIndividu->materi->nama_materi }})</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
@@ -119,7 +120,8 @@
                                     </td>
                                     <td>
                                         @if ($tugas->nilai == null || $tugas->nilai == '')
-                                            <a href="" class="btn btn-success btn-sm btn-flat"><i
+                                            <a href="{{ route('kelas.topikPembahasan.materi.tugasIndividu.penilaian.detail', [$kelas->id, $topikPembahasan->id, $materi->id, $tugasIndividu->id, $tugas->id]) }}"
+                                                class="btn btn-success btn-sm btn-flat"><i
                                                     class="fa fa-star"></i>&nbsp;Input Nilai</a>
                                         @else
                                             <a href="" class="btn btn-warning btn-sm btn-flat"><i

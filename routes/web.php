@@ -342,6 +342,7 @@ Route::middleware('auth', 'isDosen')->group(function () {
 
                     Route::group(['prefix' => '/{tugasIndividu}/penilaian'], function () {
                         Route::get('', [PengumpulanTugasIndividuController::class, 'index'])->name('kelas.topikPembahasan.materi.tugasIndividu.penilaian');
+                        Route::get('/{pengumpulanTugasIndividu}', [PengumpulanTugasIndividuController::class, 'detail'])->name('kelas.topikPembahasan.materi.tugasIndividu.penilaian.detail');
                     });
                 });
 

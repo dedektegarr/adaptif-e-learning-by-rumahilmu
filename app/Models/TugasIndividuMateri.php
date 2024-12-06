@@ -21,6 +21,7 @@ class TugasIndividuMateri extends Model
     public function rubrikPenilaians()
     {
         return $this->belongsToMany(RubrikPenilaian::class, 'rubrik_penilaian_tugas_individus', 'tugas_individu_id', 'rubrik_penilaian_id')
+            ->whereNull('rubrik_penilaian_tugas_individus.deleted_at')
             ->using(RubrikPenilaianTugasIndividu::class); // Menggunakan model pivot
     }
 
