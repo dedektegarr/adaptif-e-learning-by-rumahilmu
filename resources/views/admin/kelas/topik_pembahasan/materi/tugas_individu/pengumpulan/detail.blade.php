@@ -72,7 +72,9 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <form action="" method="POST">
+                    <form
+                        action="{{ route('kelas.topikPembahasan.materi.tugasIndividu.penilaian.post', [$kelas->id, $topikPembahasan->id, $materi->id, $tugasIndividu->id, $tugas->id]) }}"
+                        method="POST">
                         {{ csrf_field() }} {{ method_field('POST') }}
                         <div class="row">
                             <div class="col-md-12">
