@@ -2,7 +2,10 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
@@ -40,42 +43,6 @@
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
-        ],
-        "post-install-cmd": [
-            "mkdir -p storage/app/public/thumbnails",
-            "mkdir -p storage/app/public/fotos",
-            "mkdir -p storage/app/public/file_tugas_kelompok_materi/file_lama",
-            "mkdir -p storage/app/public/file_tugas_individu_materi/file_lama",
-            "mkdir -p storage/app/public/file_materi/file_lama",
-            "mkdir -p storage/app/public/mahasiswa/pengumpulan_tugas_kelompok/file_lama",
-            "mkdir -p storage/app/public/mahasiswa/pengumpulan_tugas_individu/file_lama",
-
-            "cp -r public/thumbnail/* storage/app/public/thumbnails",
-            "cp -r public/foto/* storage/app/public/fotos",
-            "cp -r public/tugas_kelompok_materi/* storage/app/public/file_tugas_kelompok_materi/file_lama",
-            "cp -r public/tugas_individu_materi/* storage/app/public/file_tugas_individu_materi/file_lama",
-            "cp -r public/file_materi/* storage/app/public/file_materi/file_lama",
-            "cp -r public/pengumpulan_tugas_kelompok/* storage/app/public/mahasiswa/pengumpulan_tugas_kelompok/file_lama",
-            "cp -r public/pengumpulan_tugas_individu/* storage/app/public/mahasiswa/pengumpulan_tugas_individu/file_lama"
-        ],
-        "post-update-cmd": [
-            "mkdir -p storage/app/public/thumbnails",
-            "mkdir -p storage/app/public/fotos",
-            "mkdir -p storage/app/public/file_tugas_kelompok_materi/file_lama",
-            "mkdir -p storage/app/public/file_tugas_individu_materi/file_lama",
-            "mkdir -p storage/app/public/file_materi/file_lama",
-            "mkdir -p storage/app/public/mahasiswa/pengumpulan_tugas_kelompok/file_lama",
-            "mkdir -p storage/app/public/mahasiswa/pengumpulan_tugas_individu/file_lama",
-
-            "cp -r public/thumbnail/* storage/app/public/thumbnails",
-            "cp -r public/foto/* storage/app/public/fotos",
-            "cp -r public/tugas_kelompok_materi/* storage/app/public/file_tugas_kelompok_materi/file_lama",
-            "cp -r public/tugas_individu_materi/* storage/app/public/file_tugas_individu_materi/file_lama",
-            "cp -r public/file_materi/* storage/app/public/file_materi/file_lama",
-            "cp -r public/pengumpulan_tugas_kelompok/* storage/app/public/mahasiswa/pengumpulan_tugas_kelompok/file_lama",
-            "cp -r public/pengumpulan_tugas_individu/* storage/app/public/mahasiswa/pengumpulan_tugas_individu/file_lama",
-
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
