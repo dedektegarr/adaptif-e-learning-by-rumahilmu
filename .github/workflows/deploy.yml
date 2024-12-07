@@ -59,4 +59,16 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ secrets.CPANEL_TARGET }}
+
+            echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
+
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan route:clear
             php artisan optimize
+
+            if [ ! -L "public/storage" ]; then
+                php artisan storage:link
+            fi
+
+            php artisan key:generate
