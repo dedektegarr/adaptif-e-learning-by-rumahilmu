@@ -19,7 +19,6 @@ class TugasIndividuMateriController extends Controller
 {
     public function index(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
     {
-        dd("OK");
         $data = Materi::with(['tugasIndividus' => function ($query) {
             $query->orderBy('created_at', 'desc')
                 ->with(['rubrikPenilaians' => function ($query) {
