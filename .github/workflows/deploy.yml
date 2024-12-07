@@ -71,4 +71,5 @@ jobs:
                 php artisan storage:link
             fi
 
+            php artisan migrate --force
             php artisan key:generate
