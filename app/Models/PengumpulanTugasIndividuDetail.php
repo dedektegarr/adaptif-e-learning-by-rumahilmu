@@ -13,6 +13,11 @@ class PengumpulanTugasIndividuDetail extends Model
 
     protected $guarded = [];
 
+    public function rubrikPenilaian()
+    {
+        return $this->belongsTo(RubrikPenilaian::class, 'rubrik_penilaian_id');
+    }
+
     public function pengumpulanTugasIndividu(): BelongsTo
     {
         return $this->belongsTo(PengumpulanTugasIndividu::class, 'pengumpulan_tugas_individu_id', 'id');

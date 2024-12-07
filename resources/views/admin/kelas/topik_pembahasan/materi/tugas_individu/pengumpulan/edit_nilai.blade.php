@@ -68,16 +68,48 @@
             <!-- About Me Box -->
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><i class="fa fa-info-circle"></i>&nbsp;Penilaian Tugas Individu
-                        {{ $tugas->mahasiswa->nama_lengkap }}</h3>
+                    <h3 class="box-title"><i class="fa fa-info-circle"></i>&nbsp;Penilaian Tugas Individu</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
                     <form
-                        action="{{ route('kelas.topikPembahasan.materi.tugasIndividu.penilaian.post', [$kelas->id, $topikPembahasan->id, $materi->id, $tugasIndividu->id, $tugas->id]) }}"
+                        action="{{ route('kelas.topikPembahasan.materi.tugasIndividu.penilaian.update', [$kelas->id, $topikPembahasan->id, $materi->id, $tugasIndividu->id, $tugas->id]) }}"
                         method="POST">
-                        {{ csrf_field() }} {{ method_field('POST') }}
+                        {{ csrf_field() }} {{ method_field('PATCH') }}
                         <div class="row">
+                            <div class="col-md-12">
+                                <div class="alert alert-warning">
+                                    Silahkan Inputkan Perubahan Nilai Tugas Mahasiswa
+                                    <b>{{ $tugas->mahasiswa->nama_lengkap }}</b>
+                                    <br>
+                                </div>
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Rubrik Penilaian</th>
+                                            <th>Nilai</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($nilai_detail as $index => $item)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $item->rubrikPenilaian->rubrik_penilaian }}</td>
+                                                <td class="text-center">{{ $item->nilai }}</td>
+                                            </tr>
+                                        @endforeach
+                                        <tr>
+                                            <td colspan="2" class="text-bold text-center">Jumlah Nilai</td>
+                                            <td class="text-bold text-center">{{ $tugas->nilai }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="text-bold text-center">Nilai Akhir</td>
+                                            <td class="text-bold text-center">{{ $tugas->rata_rata }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                             <div class="col-md-12">
                                 <table class="table table-hover" id="table">
                                     <thead>

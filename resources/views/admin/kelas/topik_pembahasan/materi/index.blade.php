@@ -111,7 +111,7 @@
                                             <td>
                                                 @if ($materi->file_materi != null)
                                                     <a class="btn btn-primary btn-sm"
-                                                        href="{{ asset('storage/' . $materi->file_materi) }}"
+                                                        href="{{ asset(checkStoragePath($materi->file_materi)) }}"
                                                         target="_blank">
                                                         <i style="margin-right: 3px" class="fa fa-file"></i>
                                                         Lihat Materi
@@ -124,7 +124,7 @@
                                                 @if ($materi->url_materi == null || $materi->url_materi == '')
                                                     <a style="color: red;">url tidak tersedia</a>
                                                 @else
-                                                    <a class="btn btn-primary btn-sm" href="{{ $materi->contentUrl }}"
+                                                    <a class="btn btn-primary btn-sm" href="{{ $materi->url_materi }}"
                                                         target="_blank">
                                                         <i style="margin-right: 3px" class="fa fa-video"></i>
                                                         Youtube 1</a>

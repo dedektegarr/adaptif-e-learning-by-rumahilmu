@@ -105,7 +105,8 @@
                                                 <td>
                                                     @if ($tugasKelompok->file_tugas != null)
                                                         <a class="btn btn-primary btn-sm"
-                                                            href="{{ asset($tugasKelompok->file_tugas) }}" target="_blank">
+                                                            href="{{ asset(checkStoragePath($tugasKelompok->file_tugas)) }}"
+                                                            target="_blank">
                                                             <i style="margin-right: 3px" class="fa fa-file"></i>
                                                             Lihat File Tugas
                                                         </a>

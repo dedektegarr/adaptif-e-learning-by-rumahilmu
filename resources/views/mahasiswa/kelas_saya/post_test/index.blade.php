@@ -51,11 +51,11 @@
                         </i>
                     </button>
                 </div>
-                @if ($alertType === 'success' && $isLast === false && !$isGenerated)
+                @if ($alertType === 'success' && !$isLast && !$isGenerated)
                     <button id="generateFuzzyButton" class="btn btn-primary btn-sm">
                         <i class="fa fa-refresh fa-spin"></i>&nbsp; Buka Materi Berikutnya
                     </button>
-                @else
+                @elseif($alertType === 'success' && !$isLast && $isGenerated)
                     <button id="generateFuzzyButton" class="btn btn-secondary btn-sm" disabled>
                         <i class="fa fa-check"></i>&nbsp; Materi Berikutnya Sudah Dibuka
                     </button>

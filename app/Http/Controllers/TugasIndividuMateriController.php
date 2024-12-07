@@ -77,7 +77,7 @@ class TugasIndividuMateriController extends Controller
 
                     $simpan = TugasIndividuMateri::create([
                         'materi_id' =>  $materi->id,
-                        'file_tugas' => 'storage/' . $path,
+                        'file_tugas' => $path,
                         'tugas' => $request->tugas,
                         'waktu_mulai' => $waktuMulai,
                         'waktu_selesai' => $waktuSelesai,
@@ -160,7 +160,7 @@ class TugasIndividuMateriController extends Controller
 
             $tugasIndividu->update([
                 'materi_id' =>  $materi->id,
-                'file_tugas' => 'storage/' . $filePath,
+                'file_tugas' => $filePath,
                 'tugas' => $request->tugas,
                 'waktu_mulai' => $waktuMulai,
                 'waktu_selesai' => $waktuSelesai,

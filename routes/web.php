@@ -344,6 +344,8 @@ Route::middleware('auth', 'isDosen')->group(function () {
                         Route::get('', [PengumpulanTugasIndividuController::class, 'index'])->name('kelas.topikPembahasan.materi.tugasIndividu.penilaian');
                         Route::get('/{pengumpulanTugasIndividu}', [PengumpulanTugasIndividuController::class, 'detail'])->name('kelas.topikPembahasan.materi.tugasIndividu.penilaian.detail');
                         Route::post('/{pengumpulanTugasIndividu}', [PengumpulanTugasIndividuController::class, 'post'])->name('kelas.topikPembahasan.materi.tugasIndividu.penilaian.post');
+                        Route::get('/{pengumpulanTugasIndividu}/edit', [PengumpulanTugasIndividuController::class, 'edit'])->name('kelas.topikPembahasan.materi.tugasIndividu.penilaian.edit');
+                        Route::patch('/{pengumpulanTugasIndividu}/update', [PengumpulanTugasIndividuController::class, 'update'])->name('kelas.topikPembahasan.materi.tugasIndividu.penilaian.update');
                     });
                 });
 

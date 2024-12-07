@@ -87,7 +87,7 @@ class TugasKelompokMateriController extends Controller
                     $simpan = TugasKelompokMateri::create([
                         'materi_id' =>  $materi->id,
                         'judul_tugas' => $request->judul_tugas,
-                        'file_tugas' => 'storage/' . $path,
+                        'file_tugas' => $path,
                         'tugas' => $request->tugas,
                         'waktu_mulai' => $waktuMulai,
                         'waktu_selesai' => $waktuSelesai,
@@ -172,7 +172,7 @@ class TugasKelompokMateriController extends Controller
             $tugasKelompok->update([
                 'materi_id' =>  $materi->id,
                 'judul_tugas' => $request->judul_tugas,
-                'file_tugas' => 'storage/' . $filePath,
+                'file_tugas' => $filePath,
                 'tugas' => $request->tugas,
                 'waktu_mulai' => $waktuMulai,
                 'waktu_selesai' => $waktuSelesai,

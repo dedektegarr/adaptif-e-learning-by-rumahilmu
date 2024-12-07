@@ -1,19 +1,29 @@
 <?php
 
-    use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Route;
 
-    function set_active($uri, $output = 'active')
-    {
-        if( is_array($uri) ) {
+function set_active($uri, $output = 'active')
+{
+    if (is_array($uri)) {
         foreach ($uri as $u) {
             if (Route::is($u)) {
-            return $output;
-            }
-        }
-        } else {
-            if (Route::is($uri)){
                 return $output;
             }
         }
+    } else {
+        if (Route::is($uri)) {
+            return $output;
+        }
     }
-?>
+}
+
+function checkStoragePath($path)
+{
+    $splitPath = explode("/", $path);
+
+    if (in_array("storage", $splitPath)) {
+        return $path;
+    }
+
+    return "storage/" . implode("/", $splitPath);;
+}

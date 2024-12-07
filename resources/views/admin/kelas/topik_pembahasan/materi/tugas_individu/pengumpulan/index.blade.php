@@ -32,8 +32,8 @@
                     <strong><i class="fa fa-external-link"></i>&nbsp; Dokumen Tugas</strong>
                     @if ($tugasIndividu->file_tugas !== null && $tugasIndividu->fileTugas !== '')
                         <div style="margin-left: 12px !important; margin-top:10px !important;">
-                            <a class="btn btn-primary btn-sm" href="{{ asset($tugasIndividu->file_tugas) }}"
-                                target="_blank">
+                            <a class="btn btn-primary btn-sm"
+                                href="{{ asset(checkStoragePath($tugasIndividu->file_tugas)) }}" target="_blank">
                                 <i style="margin-right: 3px" class="fa fa-pencil"></i>
                                 Lihat Soal
                             </a>
@@ -106,8 +106,8 @@
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $tugas->mahasiswa->nama_lengkap }}</td>
                                     <td>
-                                        <a class="btn btn-primary btn-sm" href="{{ asset($tugas->file_tugas) }}"
-                                            target="_blank">
+                                        <a class="btn btn-primary btn-sm"
+                                            href="{{ asset(checkStoragePath($tugas->file_tugas)) }}" target="_blank">
                                             <i style="margin-right: 3px" class="fa fa-file"></i>
                                             Lihat Tugas
                                         </a>
@@ -124,8 +124,8 @@
                                                 class="btn btn-success btn-sm btn-flat"><i
                                                     class="fa fa-star"></i>&nbsp;Input Nilai</a>
                                         @else
-                                            <a href="" class="btn btn-warning btn-sm btn-flat"><i
-                                                    class="fa fa-edit"></i>&nbsp;
+                                            <a href="{{ route('kelas.topikPembahasan.materi.tugasIndividu.penilaian.edit', [$kelas->id, $topikPembahasan->id, $materi->id, $tugasIndividu->id, $tugas->id]) }}"
+                                                class="btn btn-warning btn-sm btn-flat"><i class="fa fa-edit"></i>&nbsp;
                                                 Edit Nilai</a>
                                         @endif
                                     </td>

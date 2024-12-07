@@ -52,7 +52,7 @@
                         </div>
                     </div>
 
-                    <a target="_blank" href="{{ asset($tugas->file_tugas) }}" download
+                    <a target="_blank" href="{{ asset(checkStoragePath($tugas->file_tugas)) }}" download
                         class="text-white btn btn-success btn-sm my-1">
                         Download File
                     </a>
@@ -417,7 +417,7 @@
                                         // Reload only the content inside the div with id="relad"
                                         $.ajax({
                                             url: window.location
-                                            .href, // Re-fetch current page content
+                                                .href, // Re-fetch current page content
                                             success: function(response) {
                                                 // Use jQuery to replace the content of #relad with the new content
                                                 $('#reload').html($(response)
@@ -426,7 +426,7 @@
                                             error: function() {
                                                 console.error(
                                                     'Failed to reload content'
-                                                    );
+                                                );
                                             }
                                         });
                                     }

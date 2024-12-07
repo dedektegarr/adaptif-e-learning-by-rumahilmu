@@ -16,16 +16,16 @@ class MateriKelasController extends Controller
     public function index(Kelas $kelas, TopikPembahasanKelas $topikPembahasan)
     {
         $data = TopikPembahasanKelas::with(['materis', 'kelas'])
-                ->whereHas('kelas', function ($query) use ($kelas) {
-                    $query->where('id', $kelas->id)
-                        ->where('pengampu_id', Auth::user()->id);
-                })
-                ->where('id', $topikPembahasan->id)
-                ->first();
+            ->whereHas('kelas', function ($query) use ($kelas) {
+                $query->where('id', $kelas->id)
+                    ->where('pengampu_id', Auth::user()->id);
+            })
+            ->where('id', $topikPembahasan->id)
+            ->first();
 
         $existingLevels = Materi::where('topik_pembahasan_id', $topikPembahasan->id)
-                ->pluck('critical_status')
-                ->toArray();
+            ->pluck('critical_status')
+            ->toArray();
 
         $options = [0, 1, 2];
 
@@ -64,15 +64,17 @@ class MateriKelasController extends Controller
         return view('admin/kelas.topik_pembahasan/materi.index', compact('data', 'kelas', 'options', 'labels', 'allLevelsAdded'));
     }
 
-    public function detail(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi){
+    public function detail(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
+    {
         $materi = Materi::with(['topikPembahasanKelas.kelas'])
-                ->where('id', $materi->id)
-                ->first();
-        return view('admin/kelas/topik_pembahasan/materi.detail',compact('materi'));
+            ->where('id', $materi->id)
+            ->first();
+        return view('admin/kelas/topik_pembahasan/materi.detail', compact('materi'));
     }
 
 
-    public function post(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan){
+    public function post(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan)
+    {
         $validator = Validator::make($request->all(), [
             'isi_materi'  => 'required',
             'nama_materi' => 'required|string|max:255',
@@ -83,7 +85,7 @@ class MateriKelasController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error'  =>  0, 'text'   =>  $validator->errors()->first()],422);
+            return response()->json(['error'  =>  0, 'text'   =>  $validator->errors()->first()], 422);
         }
 
         DB::beginTransaction();
@@ -109,19 +111,19 @@ class MateriKelasController extends Controller
                     ]);
 
                     activity()
-                    ->causedBy(Auth::user())
-                    ->performedOn($simpan)
-                    ->event('admin_created')
-                    ->withProperties([
-                        'created_fields' => $simpan,
-                        'log_name' => 'materi topik pembahasan kelas'
-                    ])
-                    ->log(Auth::user()->nama_lengkap . ' menginput data materi topik pembahasan baru.');
+                        ->causedBy(Auth::user())
+                        ->performedOn($simpan)
+                        ->event('admin_created')
+                        ->withProperties([
+                            'created_fields' => $simpan,
+                            'log_name' => 'materi topik pembahasan kelas'
+                        ])
+                        ->log(Auth::user()->nama_lengkap . ' menginput data materi topik pembahasan baru.');
 
                     DB::commit();
                     return response()->json([
                         'text'  =>  'Berhasil, penyimpanan data berhasil',
-                        'url'   =>  route('kelas.topikPembahasan.materi',[$kelas->id, $topikPembahasan->id]),
+                        'url'   =>  route('kelas.topikPembahasan.materi', [$kelas->id, $topikPembahasan->id]),
                     ]);
                 } else {
                     return response()->json(['error' => 0, 'text' => 'Gagal, file tidak valid.'], 422);
@@ -132,15 +134,18 @@ class MateriKelasController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'text' =>  'Oopps, penyimpanan data gagal']);
+                'text' =>  'Oopps, penyimpanan data gagal'
+            ]);
         }
     }
 
-    public function edit(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi){
+    public function edit(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
+    {
         return $materi;
     }
 
-    public function update(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan) {
+    public function update(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan)
+    {
         $validator = Validator::make($request->all(), [
             'isi_materi'  =>   'required'
         ]);
@@ -151,7 +156,7 @@ class MateriKelasController extends Controller
 
         DB::beginTransaction();
         try {
-            $materi = Materi::where('id',$request->materi_id)->first();
+            $materi = Materi::where('id', $request->materi_id)->first();
             $filePath = $materi->file_materi;
 
             if ($request->hasFile('file_materi')) {
@@ -199,7 +204,8 @@ class MateriKelasController extends Controller
         }
     }
 
-    public function delete(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi){
+    public function delete(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
+    {
         $oldData = $materi->toArray();
         $materi->delete();
         activity()
@@ -215,6 +221,6 @@ class MateriKelasController extends Controller
             'message' => 'Data berhasil dihapus!',
             'alert-type' => 'success'
         );
-        return redirect()->route('kelas.topikPembahasan.materi',[$kelas->id, $topikPembahasan->id])->with($notification);
+        return redirect()->route('kelas.topikPembahasan.materi', [$kelas->id, $topikPembahasan->id])->with($notification);
     }
 }
