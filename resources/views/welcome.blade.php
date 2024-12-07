@@ -99,8 +99,8 @@
                             <div class="col-sm-10 col-lg-8">
                                 <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Adaptif E-Learning
                                 </h5>
-                                <h1 class="display-3 text-white animated slideInDown">Get Educated Testing woiii Online
-                                    From Your Home</h1>
+                                <h1 class="display-3 text-white animated slideInDown">Get Educated Online From Your Home
+                                </h1>
                                 <p class="fs-5 text-white mb-4 pb-2">Belajar fleksibel di waktu dan tempat pilihanmu,
                                     dengan materi yang pas untuk mendukung suksesmu setiap hari</p>
                                 <a href="{{ route('login') }}"
