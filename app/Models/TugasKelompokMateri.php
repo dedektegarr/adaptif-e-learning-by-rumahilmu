@@ -25,11 +25,13 @@ class TugasKelompokMateri extends Model
 
     public function rubrikPenilaians()
     {
-        return $this->belongsToMany(RubrikPenilaian::class, 'rubrik_penilaian_tugas_kelompoks','tugas_kelompok_materi_id','rubrik_penilaian_id')
-                    ->using(RubrikPenilaianTugasKelompok::class); // Menggunakan model pivot
+        return $this->belongsToMany(RubrikPenilaian::class, 'rubrik_penilaian_tugas_kelompoks', 'tugas_kelompok_materi_id', 'rubrik_penilaian_id')
+            ->whereNull('rubrik_penilaian_tugas_kelompoks.deleted_at')
+            ->using(RubrikPenilaianTugasKelompok::class); // Menggunakan model pivot
     }
 
-    public function pengumpulanTugas(){
-        return $this->hasMany(PengumpulanTugasKelompok::class, 'tugas_kelompok_id','id');
+    public function pengumpulanTugas()
+    {
+        return $this->hasMany(PengumpulanTugasKelompok::class, 'tugas_kelompok_id', 'id');
     }
 }

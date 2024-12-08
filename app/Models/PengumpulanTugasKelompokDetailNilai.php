@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PengumpulanTugasKelompokDetailNilai extends Model
 {
-    use HasFactory ,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
@@ -21,5 +21,10 @@ class PengumpulanTugasKelompokDetailNilai extends Model
     public function pengumpulanTugasKelompokDetail(): BelongsTo
     {
         return $this->belongsTo(PengumpulanTugasKelompokDetail::class, 'pengumpulan_tugas_kelompok_id', 'id');
+    }
+
+    public function rubrikPenilaian()
+    {
+        return $this->belongsTo(RubrikPenilaian::class, 'rubrik_penilaian_id');
     }
 }

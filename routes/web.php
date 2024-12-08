@@ -40,6 +40,7 @@ use App\Http\Controllers\KuisionerKelompokKelasController;
 use App\Http\Controllers\MahasiswaKelasTersediaController;
 use App\Http\Controllers\PengumpulanTugasIndividuController;
 use App\Http\Controllers\JawabanBankSoalPembahasanController;
+use App\Http\Controllers\PengumpulanTugasKelompokController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -356,6 +357,15 @@ Route::middleware('auth', 'isDosen')->group(function () {
                     Route::patch('/update', [TugasKelompokMateriController::class, 'update'])->name('kelas.topikPembahasan.materi.tugasKelompok.update');
                     Route::delete('{tugasKelompok}/delete', [TugasKelompokMateriController::class, 'delete'])->name('kelas.topikPembahasan.materi.tugasKelompok.delete');
                     Route::post('/tambah_rubrik_penilaian', [TugasKelompokMateriController::class, 'tambahRubrikPenilaian'])->name('kelas.topikPembahasan.materi.tugasKelompok.tambahRubrikPenilaian');
+
+                    Route::group(['prefix' => '/{tugasKelompok}/penilaian'], function () {
+                        Route::get('', [PengumpulanTugasKelompokController::class, 'index'])->name('kelas.topikPembahasan.materi.tugasKelompok.penilaian');
+                        Route::get('/{pengumpulanTugasKelompok}', [PengumpulanTugasKelompokController::class, 'detail'])->name('kelas.topikPembahasan.materi.tugasKelompok.penilaian.detail');
+                        Route::post('/{pengumpulanTugasKelompok}', [PengumpulanTugasKelompokController::class, 'post'])->name('kelas.topikPembahasan.materi.tugasKelompok.penilaian.post');
+                        Route::get('/{pengumpulanTugasKelompok}/hasil', [PengumpulanTugasKelompokController::class, 'hasil'])->name('kelas.topikPembahasan.materi.tugasKelompok.penilaian.hasil');
+                        Route::get('/{pengumpulanTugasKelompok}/edit', [PengumpulanTugasKelompokController::class, 'edit'])->name('kelas.topikPembahasan.materi.tugasKelompok.penilaian.edit');
+                        Route::patch('/{pengumpulanTugasKelompok}/update', [PengumpulanTugasKelompokController::class, 'update'])->name('kelas.topikPembahasan.materi.tugasKelompok.penilaian.update');
+                    });
                 });
 
                 Route::group(['prefix'  => '/{materi}/kuis'], function () {

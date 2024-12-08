@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('subTitle', 'Penilaian Tugas Individu')
-@section('materi', 'Penilaian Tugas Individu')
+@section('subTitle', 'Penilaian Tugas Kelompok')
+@section('materi', 'Penilaian Tugas Kelompok')
 @section('login_as')
     Selamat Datang,
 @endsection
@@ -46,7 +46,14 @@
 
                     <hr style="margin: 15px !important;">
 
-                    <strong><i class="fa fa-user"></i>&nbsp; Nama Lengkap</strong>
+                    <strong><i class="fa fa-user"></i>&nbsp; Kelompok</strong>
+                    <p class="text-muted" style="margin:10px 0px 0px 12px !important">
+                        Kelompok {{ $tugas->kelompok }}
+                    </p>
+
+                    <hr style="margin: 15px !important;">
+
+                    <strong><i class="fa fa-user"></i>&nbsp; Ketua Kelompok</strong>
                     <p class="text-muted" style="margin:10px 0px 0px 12px !important">
                         {{ $tugas->mahasiswa->nama_lengkap }}
                     </p>
@@ -54,7 +61,6 @@
                     <hr style="margin: 15px !important;">
 
                     <strong><i class="fa fa-clock-o"></i> Waktu Pengumpulan</strong>
-
                     <p class="text-muted" style="margin:10px 0px 0px 12px !important">
                         {{ Carbon\Carbon::parse($tugas->created_at)->isoFormat('D MMMM Y') }}
                     </p>
@@ -68,13 +74,13 @@
             <!-- About Me Box -->
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><i class="fa fa-info-circle"></i>&nbsp;Penilaian Tugas Individu
+                    <h3 class="box-title"><i class="fa fa-info-circle"></i>&nbsp;Penilaian Tugas Kelompok
                         {{ $tugas->mahasiswa->nama_lengkap }}</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
                     <form
-                        action="{{ route('kelas.topikPembahasan.materi.tugasIndividu.penilaian.post', [$kelas->id, $topikPembahasan->id, $materi->id, $tugasIndividu->id, $tugas->id]) }}"
+                        action="{{ route('kelas.topikPembahasan.materi.tugasKelompok.penilaian.post', [$kelas->id, $topikPembahasan->id, $materi->id, $tugasKelompok->id, $tugas->id]) }}"
                         method="POST">
                         {{ csrf_field() }} {{ method_field('POST') }}
                         <div class="row">

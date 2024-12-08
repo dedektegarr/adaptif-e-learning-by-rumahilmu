@@ -35,7 +35,7 @@
                             <a class="btn btn-primary btn-sm" href="{{ asset(checkStoragePath($tugas->file_tugas)) }}"
                                 target="_blank">
                                 <i style="margin-right: 3px" class="fa fa-pencil"></i>
-                                Lihat Soal
+                                Lihat Tugas
                             </a>
                         </div>
                     @else

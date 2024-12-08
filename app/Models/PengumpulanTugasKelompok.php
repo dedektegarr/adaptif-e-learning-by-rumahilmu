@@ -13,8 +13,19 @@ class PengumpulanTugasKelompok extends Model
 
     protected $guarded = [];
 
-    public function pengumpulanTugasDetails(){
-        return $this->hasMany(PengumpulanTugasKelompokDetail::class, 'pengumpulan_tugas_kelompok_id','id');
+    public function pengumpulanTugasDetails()
+    {
+        return $this->hasMany(PengumpulanTugasKelompokDetail::class, 'pengumpulan_tugas_kelompok_id', 'id');
+    }
+
+    public function pengumpulanTugasDetailNilais()
+    {
+        return $this->hasMany(PengumpulanTugasKelompokDetailNilai::class, 'pengumpulan_tugas_kelompok_id', 'id');
+    }
+
+    public function mahasiswa(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'ketua_kelompok_id', 'id');
     }
 
     /**
