@@ -62,6 +62,35 @@
                 <!-- /.box-body -->
             </div>
             <!-- /.box -->
+
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-info-circle"></i>&nbsp;Detail Plagiasi</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div
+                        style="width:100%; padding:1rem; margin-bottom:1rem; display:flex; flex-direction: column; align-items:center; justify-content:center">
+                        <h2>{{ number_format($tugas->similarityResults->max('similarity_score') * 100, 0) }}%</h2>
+                        <p>Plagiasi Tertinggi</p>
+                    </div>
+
+                    <ul class="list-group">
+                        @foreach ($tugas->similarityResults as $cosim)
+                            <li class="list-group-item">
+                                <a href="{{ asset(checkStoragePath($cosim->comparedPengumpulanTugas->file_tugas)) }}"
+                                    target="_blank">
+                                    <div style="display: flex; align-items:center; justify-content:space-between">
+                                        <span>{{ $cosim->comparedPengumpulanTugas->mahasiswa->nama_lengkap }}</span>
+                                        <span>{{ number_format($cosim->similarity_score * 100, 0) }}%</span>
+                                    </div>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            <!-- /.box-body -->
         </div>
 
         <div class="col-md-9" id="informasi2">
@@ -143,7 +172,8 @@
                                                         value="{{ $tugas->mahasiswa_id }}">
                                                     <select name="rubrik{{ $rubrik->id }}" id=""
                                                         class="form-control" required>
-                                                        <option disabled selected value="">-- pilih nilai --</option>
+                                                        <option disabled selected value="">-- pilih nilai --
+                                                        </option>
                                                         @foreach ($rubrik->indikatorPenilaians as $indikator)
                                                             <option value="{{ $indikator->skor_indikator }}">
                                                                 {{ $indikator->nama_indikator }} (Skor :

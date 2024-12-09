@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Metadata;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Livewire\Component;
@@ -22,31 +21,31 @@ class PreprocessButton extends Component
         });
 
         foreach ($tugas as $index => $item) {
+            $file_path = public_path(checkStoragePath($item->file_tugas));
+            $metadata = parseMetadata($file_path);
+
+            if (!$metadata) {
+                continue;
+            }
+
             $response = Http::get("http://127.0.0.1:5000/preprocess?filename=" . $item->filename);
 
             if ($response->successful()) {
                 $data = $response->json();
 
-                Metadata::create([
-                    "pengumpulan_tugas_id" => $item->id,
-                    "title" => NULL,
-                    "subject" => NULL,
-                    "author" => NULL,
-                    "creator" => NULL,
-                    "producer" => NULL,
-                    "pages" => NULL,
-                    "creation_date" => NULL,
-                    "mod_date" => NULL,
-                    "word_tokens" => $data["word_tokens"],
-                    "created_at" => Carbon::now(),
-                    "updated_at" => Carbon::now(),
-                ]);
+                $metadata["pengumpulan_tugas_id"] = $item->id;
+                $metadata["word_tokens"] = $data["word_tokens"];
+                $metadata["created_at"] = Carbon::now();
+                $metadata["updated_at"] = Carbon::now();
+
+                // $item->metadata()->delete();
+                $item->metadata()->create($metadata);
             } else {
                 dd("Error: " . $response->status());
             }
         }
 
-        dd("Berhasil");
+        return $this->js("window.location.reload()");
     }
 
     public function render()

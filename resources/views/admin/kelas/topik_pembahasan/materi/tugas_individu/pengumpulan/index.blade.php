@@ -86,17 +86,26 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <div style="margin-bottom: 1em; display:flex; align-items:center; gap:.6rem">
-                        <livewire:preprocess-button :daftarTugas="$pengumpulanTugas" label="Preprocess Semua Tugas" />
-                        <livewire:check-similarity-button :daftarTugas="$pengumpulanTugas" label="Periksa Plagiasi" />
+                    <div class="callout">
+                        @if ($pengumpulanTugas->some(fn($tugas) => $tugas->metadata))
+                            <livewire:check-similarity-button :daftarTugas="$pengumpulanTugas" label="Periksa Plagiasi" />
+                            <p style="margin-top: .5rem; font-size: 12px">Periksa plagiasi terlebih dahulu untuk input nilai
+                            </p>
+                        @else
+                            <livewire:preprocess-button :daftarTugas="$pengumpulanTugas" label="Preproces Semua Tugas" />
+                            <p style="margin-top: .5rem; font-size: 12px">Preproses semua tugas untuk melakukan pemeriksaan
+                                plagiasi</p>
+                        @endif
+
                     </div>
+
                     <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th>Nama Siswa</th>
                                 <th>File Tugas</th>
-                                {{-- <th>Rerata Tingkat Plagiasi</th> --}}
+                                <th>Tingkat Plagiasi</th>
                                 <th>Waktu Pengumpulan</th>
                                 <th>Nilai</th>
                             </tr>
@@ -116,17 +125,23 @@
                                             Lihat Tugas
                                         </a>
                                     </td>
-                                    {{-- <td>
+                                    <td>
                                         {{ number_format($tugas->similarityResults->max('similarity_score') * 100, 0) }}%
-                                    </td> --}}
+                                    </td>
                                     <td>
                                         {{ Carbon\Carbon::parse($tugas->created_at)->isoFormat('D MMMM Y') }}
                                     </td>
                                     <td>
                                         @if ($tugas->nilai == null || $tugas->nilai == '')
-                                            <a href="{{ route('kelas.topikPembahasan.materi.tugasIndividu.penilaian.detail', [$kelas->id, $topikPembahasan->id, $materi->id, $tugasIndividu->id, $tugas->id]) }}"
-                                                class="btn btn-success btn-sm btn-flat"><i
-                                                    class="fa fa-star"></i>&nbsp;Input Nilai</a>
+                                            @if ($pengumpulanTugas->some(fn($tugas) => $tugas->similarityResults->count() > 0))
+                                                <a href="{{ route('kelas.topikPembahasan.materi.tugasIndividu.penilaian.detail', [$kelas->id, $topikPembahasan->id, $materi->id, $tugasIndividu->id, $tugas->id]) }}"
+                                                    class="btn btn-success btn-sm btn-flat"><i
+                                                        class="fa fa-star"></i>&nbsp;Input Nilai</a>
+                                            @else
+                                                <a disabled class="btn btn-sm btn-flat"><i
+                                                        class="fa fa-star"></i>&nbsp;Input
+                                                    Nilai</a>
+                                            @endif
                                         @else
                                             <a href="{{ route('kelas.topikPembahasan.materi.tugasIndividu.penilaian.edit', [$kelas->id, $topikPembahasan->id, $materi->id, $tugasIndividu->id, $tugas->id]) }}"
                                                 class="btn btn-warning btn-sm btn-flat"><i class="fa fa-edit"></i>&nbsp;

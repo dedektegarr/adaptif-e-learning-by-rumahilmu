@@ -30,7 +30,7 @@ class PengumpulanTugasIndividu extends Model
 
     public function similarityResults()
     {
-        return $this->hasMany(SimilarityResults::class, 'pengumpulan_tugas_id');
+        return $this->hasMany(SimilarityResults::class, 'pengumpulan_tugas_id')->orderBy('similarity_score', 'desc');
     }
 
     public function tugasIndividu(): BelongsTo
