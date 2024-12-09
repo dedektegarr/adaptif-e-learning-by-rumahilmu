@@ -18,9 +18,19 @@ class PengumpulanTugasIndividu extends Model
         return $this->belongsTo(User::class, 'mahasiswa_id', 'id');
     }
 
+    public function metadata()
+    {
+        return $this->hasOne(Metadata::class, 'pengumpulan_tugas_id');
+    }
+
     public function pengumpulanTugasIndividuDetails()
     {
         return $this->hasMany(PengumpulanTugasIndividuDetail::class, 'pengumpulan_tugas_individu_id', 'id');
+    }
+
+    public function similarityResults()
+    {
+        return $this->hasMany(SimilarityResults::class, 'pengumpulan_tugas_id');
     }
 
     public function tugasIndividu(): BelongsTo
