@@ -86,6 +86,10 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
+                    <div style="margin-bottom: 1em; display:flex; align-items:center; gap:.6rem">
+                        <livewire:preprocess-button :daftarTugas="$pengumpulanTugas" label="Preprocess Semua Tugas" />
+                        <livewire:check-similarity-button :daftarTugas="$pengumpulanTugas" label="Periksa Plagiasi" />
+                    </div>
                     <table class="table table-hover">
                         <thead>
                             <tr>
