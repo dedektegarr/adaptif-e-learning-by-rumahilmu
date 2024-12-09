@@ -28,7 +28,7 @@ class PreprocessButton extends Component
                 continue;
             }
 
-            $response = Http::get("http://127.0.0.1:5000/preprocess?filename=" . $item->filename);
+            $response = Http::get("https://rumahilmu.org/api/cosim/preprocess?filename=" . $item->filename);
 
             if ($response->successful()) {
                 $data = $response->json();

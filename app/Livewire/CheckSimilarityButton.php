@@ -20,7 +20,7 @@ class CheckSimilarityButton extends Component
 
             $mergeWordTokens = array_merge([$currentTugas], $otherTugas->pluck("metadata.word_tokens")->toArray());
 
-            $response = Http::post("http://127.0.0.1:5000/calculate", [
+            $response = Http::post("https://rumahilmu.org/api/cosim/calculate", [
                 "word_tokens" => json_encode($mergeWordTokens)
             ]);
 
