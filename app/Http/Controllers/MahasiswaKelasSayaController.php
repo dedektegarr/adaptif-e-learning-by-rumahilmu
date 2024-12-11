@@ -863,18 +863,23 @@ class MahasiswaKelasSayaController extends Controller
                 'file',
                 file_get_contents(storage_path("app/public/" . $filePath)),
                 basename($filePath)
-            )->post("http://rumahilmu.org/api/cosim/preprocess");
+            )->post("https://rumahilmu.org/api/cosim/preprocess");
 
             if ($response->successful()) {
                 $data = $response->json();
-                $metadata = parseMetadata(storage_path("app/public/" . $filePath));
 
-                $metadata["pengumpulan_tugas_id"] = $pengumpulanTugasIndividu->id;
-                $metadata["word_tokens"] = $data["message"];
-                $metadata["created_at"] = Carbon::now();
-                $metadata["updated_at"] = Carbon::now();
+                if (isset($data['word_tokens']) && !empty($data['word_tokens'])) {
+                    $metadata = parseMetadata(storage_path("app/public/" . $filePath));
 
-                $pengumpulanTugasIndividu->metadata()->create($metadata);
+                    $metadata["pengumpulan_tugas_id"] = $pengumpulanTugasIndividu->id;
+                    $metadata["word_tokens"] = $data["word_tokens"];
+                    $metadata["created_at"] = Carbon::now();
+                    $metadata["updated_at"] = Carbon::now();
+
+                    $pengumpulanTugasIndividu->metadata()->create($metadata);
+                } else {
+                    logger()->error('word_tokens kosong atau tidak ditemukan dalam response API');
+                }
             }
 
             activity()
@@ -907,6 +912,7 @@ class MahasiswaKelasSayaController extends Controller
         if ($fileRecord) {
             Storage::disk('public')->delete($fileRecord->file_tugas);
 
+            $fileRecord->metadata()->delete();
             $fileRecord->delete();
 
             session()->flash('success', 'File berhasil dihapus!');
