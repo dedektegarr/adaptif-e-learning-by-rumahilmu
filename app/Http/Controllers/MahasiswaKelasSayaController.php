@@ -38,6 +38,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -857,6 +858,24 @@ class MahasiswaKelasSayaController extends Controller
                 'mahasiswa_id' => Auth::user()->id,
                 'file_tugas' => $filePath,
             ]);
+
+            $response = Http::attach(
+                'file',
+                file_get_contents(storage_path("app/public/" . $filePath)),
+                basename($filePath)
+            )->post("http://rumahilmu.org/api/cosim/preprocess");
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $metadata = parseMetadata(storage_path("app/public/" . $filePath));
+
+                $metadata["pengumpulan_tugas_id"] = $pengumpulanTugasIndividu->id;
+                $metadata["word_tokens"] = $data["message"];
+                $metadata["created_at"] = Carbon::now();
+                $metadata["updated_at"] = Carbon::now();
+
+                $pengumpulanTugasIndividu->metadata()->create($metadata);
+            }
 
             activity()
                 ->causedBy(Auth::user()->id)

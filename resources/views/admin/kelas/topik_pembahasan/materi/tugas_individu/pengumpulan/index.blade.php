@@ -86,18 +86,22 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <div class="callout">
-                        @if ($pengumpulanTugas->some(fn($tugas) => $tugas->metadata))
-                            <livewire:check-similarity-button :daftarTugas="$pengumpulanTugas" label="Periksa Plagiasi" />
-                            <p style="margin-top: .5rem; font-size: 12px">Periksa plagiasi terlebih dahulu untuk input nilai
-                            </p>
-                        @else
-                            <livewire:preprocess-button :daftarTugas="$pengumpulanTugas" label="Preproces Semua Tugas" />
-                            <p style="margin-top: .5rem; font-size: 12px">Preproses semua tugas untuk melakukan pemeriksaan
-                                plagiasi</p>
-                        @endif
+                    @if ($pengumpulanTugas->count() > 0)
+                        <div class="callout">
+                            @if ($pengumpulanTugas->some(fn($tugas) => $tugas->metadata))
+                                <livewire:check-similarity-button :daftarTugas="$pengumpulanTugas" label="Periksa Plagiasi" />
+                                <p style="margin-top: .5rem; font-size: 12px">Periksa plagiasi terlebih dahulu untuk input
+                                    nilai
+                                </p>
+                            @else
+                                <livewire:preprocess-button :daftarTugas="$pengumpulanTugas" label="Preproces Semua Tugas" />
+                                <p style="margin-top: .5rem; font-size: 12px">Preproses semua tugas untuk melakukan
+                                    pemeriksaan
+                                    plagiasi</p>
+                            @endif
 
-                    </div>
+                        </div>
+                    @endif
 
                     <table class="table table-hover">
                         <thead>
