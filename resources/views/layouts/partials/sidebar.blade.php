@@ -173,7 +173,15 @@
         </ul>
     </li>
 
-    <li class="{{ set_active(['dosen.rekap', 'dosen.rekap.edit']) }}">
+    <li
+        class="{{ set_active([
+            'dosen.rekap',
+            'dosen.rekap.edit',
+            'dosen.rekap.post',
+            'dosen.rekap.update',
+            'dosen.rekap.delete',
+            'dosen.rekap.filter',
+        ]) }}">
         <a href="{{ route('dosen.rekap') }}">
             <i class="fa fa-check"></i>
             <span>Rekapitulasi Nilai</span>
