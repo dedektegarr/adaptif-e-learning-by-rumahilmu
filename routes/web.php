@@ -41,6 +41,7 @@ use App\Http\Controllers\MahasiswaKelasTersediaController;
 use App\Http\Controllers\PengumpulanTugasIndividuController;
 use App\Http\Controllers\JawabanBankSoalPembahasanController;
 use App\Http\Controllers\PengumpulanTugasKelompokController;
+use App\Http\Controllers\RekapitulasiNilaiController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -470,6 +471,15 @@ Route::middleware('auth', 'isDosen')->group(function () {
                 Route::delete('{midId}/delete/{sesiId}/{pesertaId}', [UasController::class, 'pesertaDelete'])->name('dosen.uas.sesi.peserta.delete');
             });
         });
+    });
+
+    Route::group(['prefix'  => 'rekapitulasi_nilai'], function () {
+        Route::get('/', [RekapitulasiNilaiController::class, 'index'])->name('dosen.rekap');
+        Route::post('/post', [RekapitulasiNilaiController::class, 'post'])->name('dosen.rekap.post');
+        Route::get('/{id}/edit', [RekapitulasiNilaiController::class, 'edit'])->name('dosen.rekap.edit');
+        Route::patch('/{id}/update', [RekapitulasiNilaiController::class, 'update'])->name('dosen.rekap.update');
+        Route::delete('{id}/delete', [RekapitulasiNilaiController::class, 'delete'])->name('dosen.rekap.delete');
+        Route::post('/', [RekapitulasiNilaiController::class, 'filter'])->name('dosen.rekap.filter');
     });
 });
 
