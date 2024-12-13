@@ -123,7 +123,7 @@
                                                 </td>
                                                 <td>
                                                     @if ($mhs->uts != null)
-                                                        {{ number_format($mhs->uts) }}
+                                                        {{ number_format($mhs->uts * 100, 2) }}
                                                     @else
                                                         0
                                                     @endif

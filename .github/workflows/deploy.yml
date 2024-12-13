@@ -72,4 +72,5 @@ jobs:
             fi
 
             php artisan migrate --force
+            php artisan db:seed
             php artisan key:generate
