@@ -58,7 +58,7 @@
                             @endif
                         </div>
                         <div class="col-md-12 table-responsive">
-                            @if (isset($_POST['course_id']))
+                            @if (isset($_POST['kelas_id']))
                                 <table class="table table-striped table-bordered" id="table" style="width:100%;">
                                     <thead>
                                         <tr>
@@ -85,48 +85,56 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($mahasiswas as $index => $mahasiswa)
+                                        @forelse ($mahasiswas as $index => $mhs)
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
-                                                <td>{{ $mahasiswa->firstName . ' ' . $mahasiswa->lastName }}</td>
-                                                <td>{{ $mahasiswa->username }}</td>
+                                                <td>{{ $mhs->nama_lengkap }}</td>
+                                                <td>{{ $mhs->username }}</td>
                                                 <td style="text-align:center">
-                                                    {{ number_format($pre->jumlah != null ? $pre->jumlah : 0, 2) }}</td>
+                                                    {{ number_format($mhs->pretest != null ? $mhs->pretest : 0, 2) }}</td>
                                                 <td style="text-align:center">
-                                                    {{ number_format($post->jumlah != null ? $post->jumlah : 0, 2) }}</td>
+                                                    {{ number_format($mhs->posttest != null ? $mhs->posttest : 0, 2) }}
+                                                </td>
                                                 <td style="text-align:center">
-                                                    {{ number_format($post->jumlah + $pre->jumlah, 2) }}</td>
+                                                    {{ number_format($mhs->jumlah_nilai_kuis, 2) }}
+                                                </td>
                                                 <td style="text-align:center">
-                                                    {{ number_format(($post->jumlah + $pre->jumlah) / 2, 2) }}</td>
+                                                    {{ number_format($mhs->jumlah_nilai_kuis / 2, 2) }}</td>
                                                 <td style="text-align:center">
-                                                    @if ($jml_individu->jumlah != null)
-                                                        {{ number_format($jml_individu->jumlah / count($jml_individu2), 2) }}
+                                                    @if ($mhs->tugasIndividu != null)
+                                                        {{ number_format($mhs->tugasIndividu, 2) }}
                                                     @else
                                                         0
                                                     @endif
                                                 </td>
                                                 <td style="text-align:center">
-                                                    @if ($jml_kelompok->jumlah != null)
-                                                        {{ number_format($jml_kelompok->jumlah / count($jml_kelompok2), 2) }}
+                                                    @if ($mhs->tugasKelompok != null)
+                                                        {{ number_format($mhs->tugasKelompok, 2) }}
                                                     @else
                                                         0
                                                     @endif
                                                 </td>
                                                 <td style="text-align:center">
-                                                    @if ($kinerja->rata != null)
-                                                        {{ number_format($kinerja->rata / count($kinerja2), 2) }}
+                                                    @if ($mhs->penilaianKelompok != null)
+                                                        {{ number_format($mhs->penilaianKelompok, 2) }}
                                                     @else
                                                         0
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if ($uts->grade != null)
-                                                        {{ number_format(($uts->grade / count($uts2)) * 100) }}
+                                                    @if ($mhs->uts != null)
+                                                        {{ number_format($mhs->uts) }}
                                                     @else
                                                         0
                                                     @endif
                                                 </td>
-                                                <td></td>
+                                                <td>
+                                                    @if ($mhs->uas != null)
+                                                        {{ number_format($mhs->uas * 100, 2) }}
+                                                    @else
+                                                        0
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @empty
                                             <tr>

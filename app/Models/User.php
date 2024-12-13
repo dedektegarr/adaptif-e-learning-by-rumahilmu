@@ -64,6 +64,33 @@ class User extends Authenticatable
             ->using(KelasMahasiswaDetail::class); // menggunakan custom pivot model
     }
 
+    public function nilaiKuisMateris()
+    {
+        return $this->hasMany(NilaiKuisMateri::class, "mahasiswa_id");
+    }
+
+    public function tugasIndividus()
+    {
+        return $this->hasMany(PengumpulanTugasIndividu::class, "mahasiswa_id");
+    }
+
+    public function tugasKelompokDetail()
+    {
+        return $this->hasMany(PengumpulanTugasKelompokDetail::class, "mahasiswa_id");
+    }
+    public function penilaianKelompok()
+    {
+        return $this->hasMany(PenilaianKelompok::class, "mahasiswa_id");
+    }
+    public function utsNilai()
+    {
+        return $this->hasMany(UtsNilai::class, "mahasiswa_id");
+    }
+    public function uasNilai()
+    {
+        return $this->hasMany(UasNilai::class, "mahasiswa_id");
+    }
+
     /**
      * Get all of the kelasMahasiswa for the User
      *
