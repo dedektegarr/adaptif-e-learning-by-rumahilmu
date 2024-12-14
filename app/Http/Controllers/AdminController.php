@@ -155,10 +155,13 @@ class AdminController extends Controller
         ]);
 
         if ($user->role === 'administrator') {
+            $role = "administrator";
             $redirectPath = "administrator.administrator";
         } elseif ($user->role === 'dosen') {
+            $role = "dosen";
             $redirectPath = "administrator.teacher";
         } elseif ($user->role === 'mahasiswa') {
+            $role = "mahasiswa";
             $redirectPath = "administrator.student";
         }
 
@@ -166,9 +169,14 @@ class AdminController extends Controller
             ->causedBy(Auth::user()->id)
             ->event('mengubah')
             ->withProperties(['url' => $request->fullUrl()])
-            ->log(Auth::user()->nama_user . ' mengubah password administrator ' . $user->nama_lengkap);
+            ->log(Auth::user()->nama_user . ' mengubah password ' . $role . ' ' . $user->nama_lengkap);
 
-        return redirect()->route($redirectPath)->with(['success' =>  'Password berhasil di generate !']);
+        $notification = array(
+            'message' => 'Password berhasil di generate!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route($redirectPath)->with($notification);
     }
 
     // === DOSEN ===

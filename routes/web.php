@@ -36,6 +36,7 @@ use App\Http\Controllers\TugasIndividuMateriController;
 use App\Http\Controllers\TugasKelompokMateriController;
 use App\Http\Controllers\TopikPembahasanKelasController;
 use App\Http\Controllers\BankPenilaianKelompokController;
+use App\Http\Controllers\DosenController;
 use App\Http\Controllers\KuisionerKelompokKelasController;
 use App\Http\Controllers\MahasiswaKelasTersediaController;
 use App\Http\Controllers\PengumpulanTugasIndividuController;
@@ -480,6 +481,12 @@ Route::middleware('auth', 'isDosen')->group(function () {
         Route::patch('/{id}/update', [RekapitulasiNilaiController::class, 'update'])->name('dosen.rekap.update');
         Route::delete('{id}/delete', [RekapitulasiNilaiController::class, 'delete'])->name('dosen.rekap.delete');
         Route::post('/', [RekapitulasiNilaiController::class, 'filter'])->name('dosen.rekap.filter');
+    });
+
+    Route::group(["prefix" => "pengaturan_profil"], function () {
+        Route::get('/', [DosenController::class, 'profile'])->name('dosen.profile');
+        Route::patch('/update', [DosenController::class, 'update'])->name('dosen.profil.update');
+        Route::patch('/ubah_password', [DosenController::class, 'ubahPassword'])->name('dosen.profil.ubah_password');
     });
 });
 

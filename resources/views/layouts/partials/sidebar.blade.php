@@ -1,7 +1,7 @@
 <li class="header">MENU UTAMA</li>
 <li class="{{ set_active('dashboard') }}">
     <a href="{{ route('dashboard') }}">
-        <i class="fa fa-television"></i>
+        <i class="fa fa-tachometer"></i>
         <span>Dashboard</span>
     </a>
 </li>
@@ -137,7 +137,27 @@
             </li>
         </ul>
     </li>
-
+    <li
+        class="{{ set_active([
+            'dosen.rekap',
+            'dosen.rekap.edit',
+            'dosen.rekap.post',
+            'dosen.rekap.update',
+            'dosen.rekap.delete',
+            'dosen.rekap.filter',
+        ]) }}">
+        <a href="{{ route('dosen.rekap') }}">
+            <i class="fa fa-check-circle"></i>
+            <span>Rekapitulasi Nilai</span>
+        </a>
+    </li>
+    <li class="header">MANAJEMEN DATA</li>
+    <li class="{{ set_active(['bankCapaianLulusan', 'bankCapaianLulusan.edit']) }}">
+        <a href="{{ route('bankCapaianLulusan') }}">
+            <i class="fa fa-briefcase"></i>
+            <span>Capaian Lulusan</span>
+        </a>
+    </li>
     <li
         class="treeview {{ set_active(['jenisKuisioner', 'jenisKuisioner.edit', 'bankKuisioner', 'bankKuisioner.edit']) }}">
         <a href="#">
@@ -171,27 +191,6 @@
             <li class="{{ set_active(['penilaianKelompok']) }}"><a href="{{ route('penilaianKelompok') }}"><i
                         class="fa fa-circle-o"></i>&nbsp;Penilaian Kelompok</a></li>
         </ul>
-    </li>
-
-    <li
-        class="{{ set_active([
-            'dosen.rekap',
-            'dosen.rekap.edit',
-            'dosen.rekap.post',
-            'dosen.rekap.update',
-            'dosen.rekap.delete',
-            'dosen.rekap.filter',
-        ]) }}">
-        <a href="{{ route('dosen.rekap') }}">
-            <i class="fa fa-check"></i>
-            <span>Rekapitulasi Nilai</span>
-        </a>
-    </li>
-    <li class="{{ set_active(['bankCapaianLulusan', 'bankCapaianLulusan.edit']) }}">
-        <a href="{{ route('bankCapaianLulusan') }}">
-            <i class="fa fa-briefcase"></i>
-            <span>Bank Capaian Lulusan</span>
-        </a>
     </li>
 @endif
 
@@ -249,6 +248,13 @@
 
 
 <!-- Authentication -->
+<li class="header">PENGATURAN</li>
+<li class="{{ set_active(['bankCapaianLulusan', 'bankCapaianLulusan.edit']) }}">
+    <a href="{{ route('dosen.profile') }}">
+        <i class="fa fa-user"></i>
+        <span>Profil Saya</span>
+    </a>
+</li>
 <li>
     <a class="dropdown-item" href="{{ route('logout') }}"
         onclick="event.preventDefault();
