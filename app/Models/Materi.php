@@ -39,6 +39,11 @@ class Materi extends Model
         return $this->hasMany(TugasIndividuMateri::class, 'materi_id', 'id');
     }
 
+    public function diskusi()
+    {
+        return $this->hasMany(Diskusi::class, 'materi_id');
+    }
+
     public function kuis(): HasMany
     {
         return $this->hasMany(KuisMateri::class, 'materi_id', 'id');
@@ -47,9 +52,9 @@ class Materi extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'kelas_mahasiswas')
-                    ->withPivot('critical_status', 'sumber_materi')
-                    ->withTimestamps()
-                    ->using(KelasMahasiswaDetail::class); // menggunakan custom pivot model
+            ->withPivot('critical_status', 'sumber_materi')
+            ->withTimestamps()
+            ->using(KelasMahasiswaDetail::class); // menggunakan custom pivot model
     }
 
     /**

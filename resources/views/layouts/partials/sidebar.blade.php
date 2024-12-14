@@ -151,6 +151,12 @@
             <span>Rekapitulasi Nilai</span>
         </a>
     </li>
+    <li class="{{ set_active(['dosen.forum', 'dosen.forum.detail']) }}">
+        <a href="{{ route('dosen.forum') }}">
+            <i class="fa fa-comments"></i>
+            <span>Forum Diskusi</span>
+        </a>
+    </li>
     <li class="header">MANAJEMEN DATA</li>
     <li class="{{ set_active(['bankCapaianLulusan', 'bankCapaianLulusan.edit']) }}">
         <a href="{{ route('bankCapaianLulusan') }}">

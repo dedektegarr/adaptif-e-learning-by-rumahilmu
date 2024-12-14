@@ -36,13 +36,16 @@ use App\Http\Controllers\TugasIndividuMateriController;
 use App\Http\Controllers\TugasKelompokMateriController;
 use App\Http\Controllers\TopikPembahasanKelasController;
 use App\Http\Controllers\BankPenilaianKelompokController;
+use App\Http\Controllers\DiskusiController;
 use App\Http\Controllers\DosenController;
+use App\Http\Controllers\ForumController;
 use App\Http\Controllers\KuisionerKelompokKelasController;
 use App\Http\Controllers\MahasiswaKelasTersediaController;
 use App\Http\Controllers\PengumpulanTugasIndividuController;
 use App\Http\Controllers\JawabanBankSoalPembahasanController;
 use App\Http\Controllers\PengumpulanTugasKelompokController;
 use App\Http\Controllers\RekapitulasiNilaiController;
+use App\Models\TopikPembahasanKelas;
 
 Route::get('/', function () {
     return view('welcome');
@@ -481,6 +484,30 @@ Route::middleware('auth', 'isDosen')->group(function () {
         Route::patch('/{id}/update', [RekapitulasiNilaiController::class, 'update'])->name('dosen.rekap.update');
         Route::delete('{id}/delete', [RekapitulasiNilaiController::class, 'delete'])->name('dosen.rekap.delete');
         Route::post('/', [RekapitulasiNilaiController::class, 'filter'])->name('dosen.rekap.filter');
+    });
+
+    Route::group(['prefix'  => 'dosen_forum'], function () {
+        Route::get('/', [ForumController::class, 'index'])->name('dosen.forum');
+        Route::get('/add', [ForumController::class, 'add'])->name('dosen.forum.add');
+        Route::post('/', [ForumController::class, 'post'])->name('dosen.forum.post');
+        Route::get('/{forum}/edit', [ForumController::class, 'edit'])->name('dosen.forum.edit');
+        Route::patch('{forum}/update', [ForumController::class, 'update'])->name('dosen.forum.update');
+        Route::delete('{forum}/delete', [ForumController::class, 'delete'])->name('dosen.forum.delete');
+        Route::get('/{forum}/detail', [ForumController::class, 'detail'])->name('dosen.forum.detail');
+        Route::post('/{forum}/post', [ForumController::class, 'postDetail'])->name('dosen.forum.detail.post');
+        Route::patch('/detail_update', [ForumController::class, 'detailUpdate'])->name('dosen.forum.detail.update');
+        Route::get('/{forum}/cari_komentar', [ForumController::class, 'cariKomentar'])->name('dosen.forum.cari_komentar');
+
+        Route::post('/{komentarforum}/nilai_post', [ForumController::class, 'nilaiPost'])->name('dosen.forum.nilai_post');
+        Route::patch('/{komentarforum}/nilai_update', [ForumController::class, 'nilaiUpdate'])->name('dosen.forum.nilai_update');
+
+        Route::get('/get_page', [ForumController::class, 'getPage'])->name('dosen.forum.get_page');
+        Route::get('/get_kuis', [ForumController::class, 'getKuis'])->name('dosen.forum.get_kuis');
+
+        Route::get('/get_topics2', [ForumController::class, 'getTopics2'])->name('dosen.forum.get_topic');
+        Route::get('/get_page2', [ForumController::class, 'getPage2'])->name('dosen.forum.get_page');
+
+        Route::post('/filter', [ForumController::class, 'filter'])->name('dosen.forum.filter');
     });
 
     Route::group(["prefix" => "pengaturan_profil"], function () {

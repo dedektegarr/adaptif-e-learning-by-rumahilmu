@@ -27,32 +27,33 @@ class Kelas extends Model
     public function mahasiswas()
     {
         return $this->belongsToMany(User::class, 'kelas_mahasiswas', 'kelas_id', 'mahasiswa_id')
-                    ->using(KelasMahasiswa::class);
+            ->using(KelasMahasiswa::class);
     }
 
-    public function topikPembahasanKelas(){
+    public function topikPembahasanKelas()
+    {
         return $this->hasMany(TopikPembahasanKelas::class);
     }
 
     public function capaianLulusans(): BelongsToMany
     {
         return $this->belongsToMany(BankCapaianLulusan::class, 'bank_capaian_lulusan_kelas')
-                    ->using(BankCapaianLulusanKelas::class)
-                    ->wherePivot('deleted_at', null);
+            ->using(BankCapaianLulusanKelas::class)
+            ->wherePivot('deleted_at', null);
     }
 
     public function kuisioners()
     {
         return $this->belongsToMany(BankKuisioner::class, 'kelas_kuisioner')
-                    ->using(KelasKuisioner::class)
-                    ->wherePivot('deleted_at', null);
+            ->using(KelasKuisioner::class)
+            ->wherePivot('deleted_at', null);
     }
 
     public function kuisionerPenilaianKelompoks()
     {
         return $this->belongsToMany(BankPenilaianKelompok::class, 'kelas_kuisioner_kelompok')
-                    ->using(KelasKuisionerKelompok::class)
-                    ->wherePivot('deleted_at', null);
+            ->using(KelasKuisionerKelompok::class)
+            ->wherePivot('deleted_at', null);
     }
 
     /**
