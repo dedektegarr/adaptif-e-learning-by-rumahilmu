@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Adaptif E-learning System | @yield('halaman')</title>
+    <title>Adaptif E-learning System | @yield('page')</title>
     <link rel="icon" href="{{ asset('assets/img/gomit.svg') }}" type="image/png">
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -192,11 +192,7 @@
                             style="height: 120px !important; width:100% !important; max-width:100% !important "
                             alt="User Image">
                     </div>
-                    <div class="pull-left info" style="padding: 7px 5px 5px 15px;">
-                        <p>Welcome,</p>
-                        <a href="#" style="text-transform: capitalize; font-size:13px !important;"><i
-                                class="fa fa-user"></i> {{ auth()->user()->nama_lengkap }}</a>
-                    </div>
+
                 </div>
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu" data-widget="tree">
@@ -207,18 +203,17 @@
         </aside>
 
         <!-- =============================================== -->
-
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
             <section class="content-header">
                 <h1>
-                    OCERI SUBMISSION SYSTEM
-                    <small>Online Conference of Education Research International</small>
+                    E-Learning, Universitas Bengkulu
+                    <small>Sistem Informasi Pembelajaran Online</small>
                 </h1>
                 <ol class="breadcrumb">
-                    <li><a href="#"><i class="fa fa-home"></i>Application</a></li>
-                    <li class="active">@yield('halaman')</li>
+                    <li><a href="{{ route('dashboard') }}"><i class="fa fa-home"></i>Application</a></li>
+                    <li class="active">@yield('page')</li>
                 </ol>
             </section>
 
@@ -233,10 +228,11 @@
 
         <footer class="main-footer">
             <div class="pull-right hidden-xs">
-                <b>CV. Media Inti Teknologi <a href="https://gomit.id/" target="_blank">Gomit ID</a></b>
+                <b><a href="{{ config('app.url') }}" target="_blank">E-Learning Universitas Bengkulu</a></b>
             </div>
-            <strong>Copyright &copy; 2023 <a href="https://gomit.id/" target="_blank">Oceri Conference S$
-                    reserved.
+
+            <strong>Copyright © {{ Carbon\Carbon::now()->year }} <a href="{{ config('app.url') }}">Adaptif
+                    E-Learning by Rumah Ilmu</a>.</strong>
         </footer>
 
         <!-- /.control-sidebar -->
