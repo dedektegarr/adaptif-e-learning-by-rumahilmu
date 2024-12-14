@@ -249,7 +249,7 @@
 
 <!-- Authentication -->
 <li class="header">PENGATURAN</li>
-<li class="{{ set_active(['bankCapaianLulusan', 'bankCapaianLulusan.edit']) }}">
+<li class="{{ set_active(['dosen.profile']) }}">
     <a href="{{ route('dosen.profile') }}">
         <i class="fa fa-user"></i>
         <span>Profil Saya</span>
