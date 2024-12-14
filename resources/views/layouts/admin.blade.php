@@ -132,7 +132,7 @@
 
         <header class="main-header">
             <!-- Logo -->
-            <a href="../../index2.html" class="logo">
+            <a href="{{ route('dashboard') }}" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><i class="fa fa-home"></i></span>
                 <!-- logo for regular state and mobile devices -->
@@ -228,10 +228,10 @@
 
         <footer class="main-footer">
             <div class="pull-right hidden-xs">
-                <b><a href="{{ config('app.url') }}" target="_blank">E-Learning Universitas Bengkulu</a></b>
+                <b><a href="{{ route('dashboard') }}" target="_blank">E-Learning Universitas Bengkulu</a></b>
             </div>
 
-            <strong>Copyright © {{ Carbon\Carbon::now()->year }} <a href="{{ config('app.url') }}">Adaptif
+            <strong>Copyright © {{ Carbon\Carbon::now()->year }} <a href="{{ route('dashboard') }}">Adaptif
                     E-Learning by Rumah Ilmu</a>.</strong>
         </footer>
 
