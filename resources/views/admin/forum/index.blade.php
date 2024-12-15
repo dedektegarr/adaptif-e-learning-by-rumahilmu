@@ -199,7 +199,7 @@
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <form action="{{ route('dosen.forum.post') }}" method="POST">
-                                    {{ csrf_field() }} {{ method_field('POST') }}
+                                    @csrf
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <p class="modal-title" id="exampleModalLabel">Form Tambah Diskusi
@@ -213,7 +213,7 @@
                                             <div class="row">
                                                 <div class="form-group col-md-12">
                                                     <label>Pilih Kelas Telebih Dahulu</label>
-                                                    <select name="courseId" id="courseId" class="form-control" required>
+                                                    <select name="kelas_id" id="courseId" class="form-control" required>
                                                         <option disabled selected>-- pilih kelas --</option>
                                                         @foreach ($kelas as $kls)
                                                             <option value="{{ $kls->id }}">{{ $kls->nama_kelas }}
@@ -223,33 +223,33 @@
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label for="exampleInputEmail1">Pilih Topik</label>
-                                                    <select name="topicId" id="topicId" class="form-control">
+                                                    <select name="topik_id" id="topicId" class="form-control">
                                                         <option disabled selected>-- pilih topik --</option>
                                                     </select>
-                                                    @if ($errors->has('topicId'))
+                                                    @if ($errors->has('topik_id'))
                                                         <small
-                                                            class="form-text text-danger">{{ $errors->first('topicId') }}</small>
+                                                            class="form-text text-danger">{{ $errors->first('topik_id') }}</small>
                                                     @endif
                                                 </div>
 
                                                 <div class="form-group col-md-12">
                                                     <label for="exampleInputEmail1">Pilih Materi</label>
-                                                    <select name="pageId" id="pageId" class="form-control">
+                                                    <select name="materi_id" id="pageId" class="form-control">
                                                         <option disabled selected>-- pilih materi --</option>
                                                     </select>
-                                                    @if ($errors->has('pageId'))
+                                                    @if ($errors->has('materi_id'))
                                                         <small
-                                                            class="form-text text-danger">{{ $errors->first('pageId') }}</small>
+                                                            class="form-text text-danger">{{ $errors->first('materi_id') }}</small>
                                                     @endif
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label>Topik Diskusi</label>
-                                                    <input type="text" name="title" class="form-control" required>
+                                                    <input type="text" name="judul" class="form-control" required>
                                                 </div>
 
                                                 <div class="form-group col-md-12">
                                                     <label>Isi Forum Diskusi</label>
-                                                    <textarea id="forum_create" name="intro" id="content" cols="30" rows="10" required></textarea>
+                                                    <textarea id="forum_create" name="diskusi" id="content" cols="30" rows="10"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -289,16 +289,16 @@
         }
 
         $(document).on('change', '#courseId', function() {
-            var courseId = $(this).val();
-            // alert(courseId);
+            var kelas_id = $(this).val();
+            // alert(kelas_id);
             var div = $(this).parent().parent();
 
             var op = " ";
             $.ajax({
                 type: 'get',
-                url: "{{ url('get_topics/1') }}",
+                url: "{{ url('dosen_forum/get_topics') }}",
                 data: {
-                    'kelas_id': courseId
+                    'kelas_id': kelas_id
                 },
                 success: function(data) {
                     // alert(data[i].id);
@@ -306,7 +306,7 @@
                     op += '<option value="0" selected disabled>-- pilih topik --</option>';
                     for (var i = 0; i < data.length; i++) {
                         var ke = 1 + i;
-                        op += '<option value="' + data[i].id + '">' + data[i].fullName + '</option>';
+                        op += '<option value="' + data[i].id + '">' + data[i].nama_topik + '</option>';
                     }
                     div.find('#topicId').html(" ");
                     div.find('#topicId').append(op);
@@ -315,17 +315,60 @@
             });
         });
 
-        $(document).on('change', '#courseId2', function() {
-            var courseId2 = $(this).val();
-            // alert(courseId2);
+        $(document).on('change', '#topicId', function() {
+            var topik_id = $(this).val();
+            // alert(topik_id);
             var div = $(this).parent().parent();
 
             var op = " ";
             $.ajax({
                 type: 'get',
-                url: "{{ url('dosen_forum/get_topics2') }}",
+                url: "{{ url('dosen_forum/get_materi') }}",
                 data: {
-                    'courseId2': courseId2
+                    'topik_id': topik_id
+                },
+                success: function(data) {
+                    var op = '<option value="0" selected disabled>-- pilih materi --</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        var ke = 1 + i;
+
+                        // Ubah angka critical_status menjadi label
+                        var criticalLabel = '';
+                        switch (data[i]['critical_status']) {
+                            case '0':
+                                criticalLabel = 'Dasar';
+                                break;
+                            case '1':
+                                criticalLabel = 'Sedang';
+                                break;
+                            case '2':
+                                criticalLabel = 'Tinggi';
+                                break;
+                            default:
+                                criticalLabel = 'tidak diketahui';
+                        }
+
+                        op += '<option value="' + data[i].id + '">' + data[i].nama_materi + " (" +
+                            criticalLabel + ")" + '</option>';
+                    }
+                    div.find('#pageId').html(" ");
+                    div.find('#pageId').append(op);
+                },
+                error: function() {}
+            });
+        });
+
+        $(document).on('change', '#courseId2', function() {
+            var kelas_id = $(this).val();
+            // alert(kelas_id);
+            var div = $(this).parent().parent();
+
+            var op = " ";
+            $.ajax({
+                type: 'get',
+                url: "{{ url('dosen_forum/get_topics') }}",
+                data: {
+                    'kelas_id': kelas_id
                 },
                 success: function(data) {
                     // alert(data[i].id);
@@ -343,16 +386,16 @@
         });
 
         $(document).on('change', '#topicId2', function() {
-            var topicId2 = $(this).val();
-            // alert(topicId2);
+            var topik_id = $(this).val();
+            // alert(topik_id);
             var div = $(this).parent().parent();
 
             var op = " ";
             $.ajax({
                 type: 'get',
-                url: "{{ url('dosen_forum/get_page2') }}",
+                url: "{{ url('dosen_forum/get_materi') }}",
                 data: {
-                    'topicId2': topicId2
+                    'topik_id': topik_id
                 },
                 success: function(data) {
                     var op = '<option value="0" selected disabled>-- pilih materi --</option>';

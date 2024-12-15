@@ -501,11 +501,11 @@ Route::middleware('auth', 'isDosen')->group(function () {
         Route::post('/{komentarforum}/nilai_post', [ForumController::class, 'nilaiPost'])->name('dosen.forum.nilai_post');
         Route::patch('/{komentarforum}/nilai_update', [ForumController::class, 'nilaiUpdate'])->name('dosen.forum.nilai_update');
 
-        Route::get('/get_page', [ForumController::class, 'getPage'])->name('dosen.forum.get_page');
+        // Route::get('/get_page', [ForumController::class, 'getPage'])->name('dosen.forum.get_page');
         Route::get('/get_kuis', [ForumController::class, 'getKuis'])->name('dosen.forum.get_kuis');
 
-        Route::get('/get_topics2', [ForumController::class, 'getTopics2'])->name('dosen.forum.get_topic');
-        Route::get('/get_page2', [ForumController::class, 'getPage2'])->name('dosen.forum.get_page');
+        Route::get('/get_topics', [ForumController::class, 'getTopics'])->name('dosen.forum.get_topic');
+        Route::get('/get_materi', [ForumController::class, 'getMateri'])->name('dosen.forum.get_materi');
 
         Route::post('/filter', [ForumController::class, 'filter'])->name('dosen.forum.filter');
     });

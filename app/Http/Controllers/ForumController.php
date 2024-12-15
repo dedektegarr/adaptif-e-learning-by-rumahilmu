@@ -24,15 +24,39 @@ class ForumController extends Controller
         return view("admin.forum.detail", compact("forum"));
     }
 
-    public function getTopics2(Request $request)
+    public function post(Request $request)
     {
-        $topics = TopikPembahasanKelas::where('kelas_id', $request->courseId2)->get();
+        $validated = $request->validate([
+            "kelas_id" => "required",
+            "topik_id" => "required",
+            "materi_id" => "required",
+            "judul" => "required",
+            "diskusi" => "required"
+        ]);
+
+        Diskusi::create([
+            "materi_id" => $validated["materi_id"],
+            "mahasiswa_id" => Auth::user()->id,
+            "judul" => $validated["judul"],
+            "diskusi" => $validated["diskusi"],
+        ]);
+
+        $notification = array(
+            'message' => 'Berhasil, forum diskusi berhasil ditambahkan!',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('dosen.forum')->with($notification);
+    }
+
+    public function getTopics(Request $request)
+    {
+        $topics = TopikPembahasanKelas::where('kelas_id', $request->kelas_id)->get();
         return $topics;
     }
 
-    public function getPage2(Request $request)
+    public function getMateri(Request $request)
     {
-        $topics = Materi::where('topik_pembahasan_id', $request->topicId2)->get();
+        $topics = Materi::where('topik_pembahasan_id', $request->topik_id)->get();
         return $topics;
     }
 
