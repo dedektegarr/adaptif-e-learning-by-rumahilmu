@@ -496,7 +496,7 @@ Route::middleware('auth', 'isDosen')->group(function () {
         Route::get('/{forum}/detail', [ForumController::class, 'detail'])->name('dosen.forum.detail');
         Route::post('/{forum}/post', [ForumController::class, 'postDetail'])->name('dosen.forum.detail.post');
         Route::patch('/detail_update', [ForumController::class, 'detailUpdate'])->name('dosen.forum.detail.update');
-        Route::get('/{forum}/cari_komentar', [ForumController::class, 'cariKomentar'])->name('dosen.forum.cari_komentar');
+        Route::get('/{id}/cari_komentar', [ForumController::class, 'cariKomentar'])->name('dosen.forum.cari_komentar');
 
         Route::post('/{komentarforum}/nilai_post', [ForumController::class, 'nilaiPost'])->name('dosen.forum.nilai_post');
         Route::patch('/{komentarforum}/nilai_update', [ForumController::class, 'nilaiUpdate'])->name('dosen.forum.nilai_update');

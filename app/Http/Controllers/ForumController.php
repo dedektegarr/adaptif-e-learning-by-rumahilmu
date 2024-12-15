@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Diskusi;
+use App\Models\DiskusiRespon;
 use App\Models\Kelas;
 use App\Models\Materi;
 use App\Models\TopikPembahasanKelas;
@@ -48,10 +49,51 @@ class ForumController extends Controller
         return redirect()->route('dosen.forum')->with($notification);
     }
 
+    public function postDetail(Diskusi $forum, Request $request)
+    {
+        $request->validate([
+            "subjek" => "required",
+            "pesan" => "required"
+        ]);
+
+        $request['mahasiswa_id'] = Auth::user()->id;
+
+        $forum->diskusiRespons()->create($request->all());
+
+        return redirect()->route('dosen.forum.detail', $forum->id)->with(['success' =>  'Berhasil, komentar berhasil ditambahkan']);
+    }
+
+    public function detailUpdate(Request $request)
+    {
+        $request->validate([
+            "subjek" => "required",
+            "pesan" => "required"
+        ]);
+
+        $komentar = DiskusiRespon::find($request->id);
+        $komentar->update([
+            "subjek" => $request->subjek,
+            "pesan" => $request->pesan,
+        ]);
+
+        $notification = array(
+            'message' => 'Berhasil, komentar berhasil diubah!',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
+    }
+
     public function getTopics(Request $request)
     {
         $topics = TopikPembahasanKelas::where('kelas_id', $request->kelas_id)->get();
         return $topics;
+    }
+
+    public function cariKomentar($id)
+    {
+        $komentar = DiskusiRespon::find($id);
+
+        return response()->json($komentar);
     }
 
     public function getMateri(Request $request)

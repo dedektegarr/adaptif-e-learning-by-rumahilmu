@@ -114,7 +114,7 @@
                         {{ csrf_field() }} {{ method_field('POST') }}
                         <div class="row" style="margin-bottom: 10px !important;">
                             <div class="form-group col-md-12">
-                                <input type="text" name="subject" class="form-control"
+                                <input type="text" name="subjek" class="form-control"
                                     placeholder="masukan subjek (jika ada)">
                             </div>
                             <div class="form-group col-md-12">
@@ -270,16 +270,15 @@
                                 <div class="modal-body">
                                     <div class="row">
                                         <input type="hidden" name="id" id="id_edit">
-                                        <input type="hidden" name="forumId" id="forum_id">
 
                                         <div class="form-group col-md-12">
                                             <label>Masukan Subjek (jika ada)</label>
-                                            <input type="text" id="subjectedit" name="subject" class="form-control">
+                                            <input type="text" id="subjectedit" name="subjek" class="form-control">
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label>Masukan Komentar</label>
-                                            <textarea name="message" class="form-control" id="messageedit" cols="30" rows="5"></textarea>
+                                            <textarea name="pesan" class="form-control" id="pesan_edit" cols="30" rows="5"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -299,6 +298,49 @@
 @endsection
 @push('scripts')
     <script>
+        if (typeof ClassicEditor !== 'undefined') {
+            ClassicEditor
+                .create(document.querySelector('#pesan_create'))
+
+            // ClassicEditor
+            //     .create(document.querySelector('#pesan_edit'))
+            //     .then(editor => {
+            //         pesanEditEditor = editor;
+            //     })
+            //     .catch(error => {
+            //         console.error(error);
+            //     });
+
+            let pesanEditEditor;
+
+            $('#modaledit').on('shown.bs.modal', function() {
+                if (!pesanEditEditor) {
+                    ClassicEditor
+                        .create(document.querySelector('#pesan_edit'))
+                        .then(editor => {
+                            pesanEditEditor = editor;
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
+            });
+
+            $('#modaledit').on('hidden.bs.modal', function() {
+                if (pesanEditEditor) {
+                    pesanEditEditor.destroy()
+                        .then(() => {
+                            pesanEditEditor = null;
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
+            });
+        } else {
+            console.error('ClassicEditor is not defined');
+        }
+
         function penilaian(id) {
             $('#penilaian' + id).show();
             $('#apenilaian' + id).hide();
@@ -323,26 +365,22 @@
             $('#abatalkanpenilaianubah' + id).hide();
         }
 
-        $(document).ready(function() {
-            $("#message").emojioneArea({
-                pickerPosition: "bottom",
-                tonesStyle: "bullet"
+        function editKomentar(id) {
+            $.ajax({
+                url: "{{ url('dosen_forum') }}" + '/' + id + "/cari_komentar",
+                type: "GET",
+                dataType: "JSON",
+                success: function(data) {
+                    $('#modaledit').modal('show');
+                    $('#subjectedit').val(data.subjek);
+                    $('#pesan_edit').val(data.pesan);
+                    $('#id_edit').val(data.id);
+                    $('#forum_id').val(data.forumId);
+                },
+                error: function() {
+                    alert("Nothing Data");
+                }
             });
-        });
-    </script>
-@endpush
-@push('scripts')
-    <script>
-        if (typeof ClassicEditor !== 'undefined') {
-            document.querySelectorAll('#pesan_create').forEach((element) => {
-                ClassicEditor
-                    .create(element)
-                    .catch(error => {
-                        console.error(error);
-                    });
-            });
-
-            var cpmkEditEditor;
         }
     </script>
 @endpush
