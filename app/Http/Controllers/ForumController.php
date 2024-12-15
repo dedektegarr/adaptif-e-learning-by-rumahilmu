@@ -83,6 +83,36 @@ class ForumController extends Controller
         return redirect()->back()->with($notification);
     }
 
+    public function nilaiUpdate(DiskusiRespon $komentarforum, Request $request)
+    {
+        $request->validate([
+            "kriteria" => "required"
+        ]);
+
+        $nilai = 0;
+
+        if ($request->kriteria == "pemicu") {
+            $nilai = 1;
+        } elseif ($request->kriteria == "eksplorasi") {
+            $nilai = 2;
+        } elseif ($request->kriteria == "integrasi") {
+            $nilai = 3;
+        } else {
+            $nilai = 4;
+        }
+
+        $komentarforum->update([
+            "nilai" => $nilai,
+            "jenis_penilaian" => $request->kriteria
+        ]);
+
+        $notification = array(
+            'message' => 'Berhasil, nilai sudah ditambahkan!',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
+    }
+
     public function getTopics(Request $request)
     {
         $topics = TopikPembahasanKelas::where('kelas_id', $request->kelas_id)->get();

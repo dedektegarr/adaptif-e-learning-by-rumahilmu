@@ -183,9 +183,9 @@
 
                                         <br>
                                         <hr style="margin:5px 0px">
-                                        <form action="{{ route('dosen.forum.nilai_post', [$komentar->id]) }}"
+                                        <form action="{{ route('dosen.forum.nilai_update', [$komentar->id]) }}"
                                             method="post" enctype="multipart/form-data">
-                                            {{ csrf_field() }} {{ method_field('POST') }}
+                                            {{ csrf_field() }} {{ method_field('PATCH') }}
                                             <div class="row" id="penilaian{{ $komentar->id }}" style="display: none">
                                                 <div class="form-group col-md-12">
                                                     <label>Pilih Kriteria Penilaian</label>
