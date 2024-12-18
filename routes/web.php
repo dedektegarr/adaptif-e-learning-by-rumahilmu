@@ -484,6 +484,7 @@ Route::middleware('auth', 'isDosen')->group(function () {
         Route::patch('/{id}/update', [RekapitulasiNilaiController::class, 'update'])->name('dosen.rekap.update');
         Route::delete('{id}/delete', [RekapitulasiNilaiController::class, 'delete'])->name('dosen.rekap.delete');
         Route::post('/', [RekapitulasiNilaiController::class, 'filter'])->name('dosen.rekap.filter');
+        Route::get('/export/{kelas}', [RekapitulasiNilaiController::class, 'export'])->name('dosen.rekap.export');
     });
 
     Route::group(['prefix'  => 'dosen_forum'], function () {

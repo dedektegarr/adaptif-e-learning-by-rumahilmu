@@ -27,7 +27,8 @@ class Kelas extends Model
     public function mahasiswas()
     {
         return $this->belongsToMany(User::class, 'kelas_mahasiswas', 'kelas_id', 'mahasiswa_id')
-            ->using(KelasMahasiswa::class);
+            ->using(KelasMahasiswa::class)
+            ->orderBy("username");
     }
 
     public function topikPembahasanKelas()

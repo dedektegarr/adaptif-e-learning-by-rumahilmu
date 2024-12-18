@@ -36,7 +36,10 @@
                                         <button type="submit" class="btn btn-primary btn-sm btn-flat"><i
                                                 class="fa fa-search"></i>&nbsp; Filter</button>
                                         @if (isset($_POST['kelas_id']))
-                                            <a id="export" class="btn btn-success btn-sm btn-flat"><i
+                                            {{-- <a href="{{ route('dosen.rekap.export', $_POST['kelas_id']) }}" type="submit"
+                                                class="btn btn-success btn-sm btn-flat"><i
+                                                    class="fa fa-file-excel-o"></i>&nbsp;Export Excel</a> --}}
+                                            <a id="export" type="submit" class="btn btn-success btn-sm btn-flat"><i
                                                     class="fa fa-file-excel-o"></i>&nbsp;Export Excel</a>
                                         @endif
                                     </div>
@@ -91,49 +94,31 @@
                                                 <td>{{ $mhs->nama_lengkap }}</td>
                                                 <td>{{ $mhs->username }}</td>
                                                 <td style="text-align:center">
-                                                    {{ number_format($mhs->pretest != null ? $mhs->pretest : 0, 2) }}</td>
-                                                <td style="text-align:center">
-                                                    {{ number_format($mhs->posttest != null ? $mhs->posttest : 0, 2) }}
+                                                    {{ number_format($mhs->pretest ?? 0, 2, ',') }}
                                                 </td>
                                                 <td style="text-align:center">
-                                                    {{ number_format($mhs->jumlah_nilai_kuis, 2) }}
+                                                    {{ number_format($mhs->posttest ?? 0, 2, ',') }}
                                                 </td>
                                                 <td style="text-align:center">
-                                                    {{ number_format($mhs->jumlah_nilai_kuis / 2, 2) }}</td>
-                                                <td style="text-align:center">
-                                                    @if ($mhs->tugasIndividu != null)
-                                                        {{ number_format($mhs->tugasIndividu, 2) }}
-                                                    @else
-                                                        0
-                                                    @endif
+                                                    {{ number_format($mhs->jumlah_nilai_kuis ?? 0, 2, ',') }}
                                                 </td>
                                                 <td style="text-align:center">
-                                                    @if ($mhs->tugasKelompok != null)
-                                                        {{ number_format($mhs->tugasKelompok, 2) }}
-                                                    @else
-                                                        0
-                                                    @endif
+                                                    {{ number_format($mhs->jumlah_nilai_kuis / 2 ?? 0, 2, ',') }}</td>
+                                                <td style="text-align:center">
+                                                    {{ number_format($mhs->tugasIndividu ?? 0, 2, ',') }}
+
                                                 </td>
                                                 <td style="text-align:center">
-                                                    @if ($mhs->penilaianKelompok != null)
-                                                        {{ number_format($mhs->penilaianKelompok, 2) }}
-                                                    @else
-                                                        0
-                                                    @endif
+                                                    {{ number_format($mhs->tugasKelompok ?? 0, 2, ',') }}
+                                                </td>
+                                                <td style="text-align:center">
+                                                    {{ number_format($mhs->penilaianKelompok ?? 0, 2, ',') }}
                                                 </td>
                                                 <td>
-                                                    @if ($mhs->uts != null)
-                                                        {{ number_format($mhs->uts * 100, 2) }}
-                                                    @else
-                                                        0
-                                                    @endif
+                                                    {{ number_format($mhs->uts * 100 ?? 0, 2, ',') }}
                                                 </td>
                                                 <td>
-                                                    @if ($mhs->uas != null)
-                                                        {{ number_format($mhs->uas * 100, 2) }}
-                                                    @else
-                                                        0
-                                                    @endif
+                                                    {{ number_format($mhs->uas * 100 ?? 0, 2, ',') }}
                                                 </td>
                                             </tr>
                                         @empty

@@ -34,19 +34,24 @@ function parseMetadata($path)
     $parser = new Parser();
 
     if (file_exists($path) && mime_content_type($path) == 'application/pdf') {
-        $pdf = $parser->parseFile($path);
-        $metadata = $pdf->getDetails();
+        try {
+            $pdf = $parser->parseFile($path);
+            $metadata = $pdf->getDetails();
 
-        return [
-            'title' => $metadata['Title'] ?? null,
-            'subject' => $metadata['Subject'] ?? null,
-            'author' => $metadata['Author'] ?? null,
-            'creator' => $metadata['Creator'] ?? null,
-            'producer' => $metadata['Producer'] ?? null,
-            'pages' => $metadata['Pages'] ?? null,
-            'creation_date' => $metadata['CreationDate'] ?? null,
-            'mod_date' => $metadata['ModDate'] ?? null,
-        ];
+            return [
+                'title' => $metadata['Title'] ?? null,
+                'subject' => $metadata['Subject'] ?? null,
+                'author' => $metadata['Author'] ?? null,
+                'creator' => $metadata['Creator'] ?? null,
+                'producer' => $metadata['Producer'] ?? null,
+                'pages' => $metadata['Pages'] ?? null,
+                'creation_date' => $metadata['CreationDate'] ?? null,
+                'mod_date' => $metadata['ModDate'] ?? null,
+            ];
+        } catch (\Exception $e) {
+            error_log("Error parsing PDF: " . $e->getMessage() . " - File: " . $path);
+            return false;
+        }
     }
 
     return false;
