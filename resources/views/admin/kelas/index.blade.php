@@ -110,12 +110,12 @@
                                                         <li style="padding: 0px 10px !important;"><a
                                                                 href="{{ route('kelas.capaianLulusan', [$kelas->id]) }}">Detail
                                                                 Capaian Lulusan</a></li>
-                                                        <li style="padding: 0px 10px !important;"><a
+                                                        {{-- <li style="padding: 0px 10px !important;"><a
                                                                 href="{{ route('kelas.kuisioner', [$kelas->id]) }}">Detail
                                                                 Kuisioner</a></li>
                                                         <li style="padding: 0px 10px !important;"><a
                                                                 href="{{ route('kelas.kuisionerKelompok', [$kelas->id]) }}">Detail
-                                                                Kuisioner Kelompok</a></li>
+                                                                Kuisioner Kelompok</a></li> --}}
                                                     </ul>
                                                 </div>
                                             </td>
