@@ -90,6 +90,7 @@
                             ->join('topik_pembahasan_kelas', 'topik_pembahasan_kelas.id', 'materis.topik_pembahasan_id')
                             ->where('pengumpulan_tugas_kelompok_details.mahasiswa_id', auth()->user()->id)
                             ->where('topik_pembahasan_kelas.id', $tugas->materi->topik_pembahasan_id)
+                            ->whereNull('pengumpulan_tugas_kelompoks.deleted_at')
                             ->first();
 
                         $anggotaKelompok = [];
@@ -103,6 +104,7 @@
                                 'pengumpulan_tugas_kelompok_id',
                                 $sudahDitambahkan->pengumpulan_tugas_kelompok_id,
                             )
+                                ->whereNull('deleted_at')
                                 ->with('mahasiswa')
                                 ->get();
                             $isAnggota = true;

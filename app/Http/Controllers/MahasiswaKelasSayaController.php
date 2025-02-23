@@ -640,6 +640,7 @@ class MahasiswaKelasSayaController extends Controller
                 ->join('pengumpulan_tugas_kelompoks', 'pengumpulan_tugas_kelompok_details.pengumpulan_tugas_kelompok_id', 'pengumpulan_tugas_kelompoks.id')
                 ->where('tugas_kelompok_id', $tugasKelompok->id)
                 ->where('mahasiswa_id', $anggotaId)
+                ->whereNull("pengumpulan_tugas_kelompok_details.deleted_at")
                 ->exists();
             if ($exists) {
                 return response()->json([

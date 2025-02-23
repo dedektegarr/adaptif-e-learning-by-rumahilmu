@@ -29,7 +29,8 @@
                 <!--end::Alert-->
 
                 <!--begin:Form-->
-                <form id="kt_modal_new_target_form" class="form" action="{{ route('mahasiswa.kelas_saya.simpan_anggota',[$kelas->id, $materi->id, $tugas->id]) }}">
+                <form id="kt_modal_new_target_form" class="form"
+                    action="{{ route('mahasiswa.kelas_saya.simpan_anggota', [$kelas->id, $materi->id, $tugas->id]) }}">
                     <meta name="csrf-token" content="{{ csrf_token() }}">
                     <!--begin::Input group-->
                     <div class="d-flex flex-column mb-8 fv-row">
@@ -37,10 +38,13 @@
                         <label class="d-flex align-items-center fs-6 fw-semibold mb-2">
                             <span class="required">Nama Anggota</span>
                         </label>
-                        <select class="form-select form-select-sm form-select-solid" name="anggota_id[]" data-control="select2" data-close-on-select="true" data-placeholder="Pilih anggota" data-allow-clear="true" multiple="multiple">
+                        <select class="form-select form-select-sm form-select-solid" name="anggota_id[]"
+                            data-control="select2" data-close-on-select="true" data-placeholder="Pilih anggota"
+                            data-allow-clear="true" multiple="multiple">
                             <option></option>
-                            @foreach($mahasiswas as $mahasiswa)
-                                <option value="{{ $mahasiswa->mahasiswa->id }}">{{ $mahasiswa->mahasiswa->nama_lengkap }}</option>
+                            @foreach ($mahasiswas as $mahasiswa)
+                                <option value="{{ $mahasiswa->mahasiswa->id }}">
+                                    {{ $mahasiswa->mahasiswa->nama_lengkap }}</option>
                             @endforeach
                         </select>
                     </div>
