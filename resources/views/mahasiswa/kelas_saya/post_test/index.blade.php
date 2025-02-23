@@ -105,7 +105,7 @@
                                                                             style="transform: scale(0.6);" />
                                                                     </div>
                                                                     <div class="fs-7">
-                                                                        {{ $jawaban->jawaban }}
+                                                                        {!! $jawaban->jawaban !!}
                                                                     </div>
                                                                 </div>
                                                             </label>

@@ -50,6 +50,10 @@
         .symbol-group .symbol img {
             display: block;
         }
+
+        div.fs-7 p {
+            margin: 0 !important;
+        }
     </style>
     <!--end::Global Stylesheets Bundle-->
     <script>
