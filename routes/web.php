@@ -45,6 +45,7 @@ use App\Http\Controllers\PengumpulanTugasIndividuController;
 use App\Http\Controllers\JawabanBankSoalPembahasanController;
 use App\Http\Controllers\PengumpulanTugasKelompokController;
 use App\Http\Controllers\RekapitulasiNilaiController;
+use App\Models\PertanyaanKuisMateri;
 use App\Models\TopikPembahasanKelas;
 
 Route::get('/', function () {
@@ -191,12 +192,18 @@ Route::middleware('auth', 'isDosen')->group(function () {
     Route::get("/bank_soal", function (Request $request) {
         $levelBerfikir = $request->query('level_berfikir');
         $kelasId = $request->query('kelasId');
+        $kuisId = $request->query('kuisId');
+
+        $soalSudahAda = PertanyaanKuisMateri::where('kuis_materi_id', $kuisId)
+            ->pluck('bank_soal_pembahasan_id')
+            ->toArray();
 
         $soal = BankSoalPembahasan::when($levelBerfikir ?? false, function ($query, $levelBerfikir) {
             return $query->where('level_berfikir', $levelBerfikir);
         })->when($kelasId ?? false, function ($query, $kelasId) {
             return $query->where('kelas_id', $kelasId);
-        })->get();
+        })->whereNotIn('id', $soalSudahAda)
+            ->get();
 
         return response()->json($soal);
     });

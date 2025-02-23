@@ -9,83 +9,85 @@ use App\Models\Materi;
 use App\Models\PertanyaanKuisMateri;
 use App\Models\TopikPembahasanKelas;
 use Carbon\Carbon;
-use Dotenv\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class SoalKuisMateriController extends Controller
 {
     public function index(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi, KuisMateri $kuis)
     {
         $data = KuisMateri::with(['pertanyaans.bankSoalPembahasan', 'materi.topikPembahasanKelas.kelas'])
-                    ->whereHas('materi.topikPembahasanKelas', function ($query) use ($kelas) {
-                        $query->whereHas('kelas', function($query2) use ($kelas){
-                            $query2->where('id', $kelas->id)
-                                ->where('pengampu_id', Auth::user()->id);
-                        });
-                    })
-                    ->where('id', $kuis->id)
-                    ->first();
+            ->whereHas('materi.topikPembahasanKelas', function ($query) use ($kelas) {
+                $query->whereHas('kelas', function ($query2) use ($kelas) {
+                    $query2->where('id', $kelas->id)
+                        ->where('pengampu_id', Auth::user()->id);
+                });
+            })
+            ->where('id', $kuis->id)
+            ->first();
         $jenis = BankSoalPembahasan::select('level_berfikir')
-                        ->groupBy('level_berfikir')
-                        ->get();
+            ->groupBy('level_berfikir')
+            ->get();
         $kelas = Kelas::all();
-        return view('admin/kelas.topik_pembahasan/materi/kuis/soal_kuis.index', compact('data','jenis','kelas'));
+
+        return view('admin/kelas.topik_pembahasan/materi/kuis/soal_kuis.index', compact('data', 'jenis', 'kelas'));
     }
 
-    public function post(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi, KuisMateri $kuis){
+    public function post(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi, KuisMateri $kuis)
+    {
+        $materi_id = $request->input("materi_id");
+        $kuis_id = $request->input("kuis_id");
+
         $validator = Validator::make($request->all(), [
             'cara' => 'required',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error'  =>  0, 'text'   =>  $validator->errors()->first()],422);
+            return response()->json(['error'  =>  0, 'text'   =>  $validator->errors()->first()], 422);
         }
 
         DB::beginTransaction();
         try {
-            $jadwal = $request->input('jadwal');
-            list($waktu_mulai, $waktu_selesai) = explode(' - ', $jadwal);
-
-            $waktu_mulai = Carbon::createFromFormat('m/d/Y h:i A', trim($waktu_mulai))->format('Y-m-d H:i:s');
-            $waktu_selesai = Carbon::createFromFormat('m/d/Y h:i A', trim($waktu_selesai))->format('Y-m-d H:i:s');
-
             if ($request->cara == "tidak") {
                 PertanyaanKuisMateri::create([
-                    'kuis_materi_id'    =>  $kuis->id,
-                    'bank_soal_pembahasan_id'    =>  $request->bank_soal_pembahasan_id,
+                    'kuis_materi_id' => $kuis->id,
+                    'bank_soal_pembahasan_id' => $request->bank_soal_pembahasan_id,
                 ]);
-            }else{
-                $pertanyaan_kuis = PertanyaanKuisMateri::where('bank_soal_pembahasan_id',$request->kuis_id)->get();
+            } else {
+                $kuisMateri = KuisMateri::where("materi_id", $materi_id)->where("jenis_kuis", $kuis_id)->first();
+                $pertanyaan_kuis = PertanyaanKuisMateri::where('kuis_materi_id', $kuisMateri->id)->get();
+
                 foreach ($pertanyaan_kuis as $pertanyaan) {
-                    QuizQuestion::where('quizId',$quizId)->where('questionSetId',$pertanyaan->questionSetId)->delete();
-                    QuizQuestion::create([
-                        'quizId'              =>  $quizId,
-                        'questionSetId'    =>  $pertanyaan->questionSetId,
+                    PertanyaanKuisMateri::where('kuis_materi_id', $kuisMateri->id)->where('bank_soal_pembahasan_id', $pertanyaan->id)->delete();
+                    PertanyaanKuisMateri::create([
+                        'kuis_materi_id' => $kuis->id,
+                        'bank_soal_pembahasan_id' =>  $pertanyaan->bank_soal_pembahasan_id,
                     ]);
                 }
             }
 
             activity()
-            ->causedBy(Auth::user())
-            ->performedOn($simpan)
-            ->event('admin_created')
-            ->withProperties([
-                'created_fields' => $simpan,
-                'log_name' => 'kuis materi'
-            ])
-            ->log(Auth::user()->nama_lengkap . ' menginput data kuis materi baru.');
+                ->causedBy(Auth::user())
+                ->performedOn($kuis)
+                ->event('admin_created')
+                ->withProperties([
+                    'created_fields' => $kuis,
+                    'log_name' => 'kuis materi'
+                ])
+                ->log(Auth::user()->nama_lengkap . ' menginput data kuis materi baru.');
 
             DB::commit();
             return response()->json([
                 'text'  =>  'Berhasil, penyimpanan data berhasil',
-                'url'   =>  route('kelas.topikPembahasan.materi.kuis',[$kelas->id, $topikPembahasan->id, $materi->id]),
+                'url'   =>  route('kelas.topikPembahasan.materi.soalKuis', [$kelas->id, $topikPembahasan->id, $materi->id, $kuis->id]),
             ]);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'text' =>  'Oopps, penyimpanan data gagal']);
+                'text' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -93,13 +95,13 @@ class SoalKuisMateriController extends Controller
     {
         // Cek apakah pretest sudah ada di materi ini
         $pretestExists = KuisMateri::where('materi_id', $materi->id)
-                            ->where('jenis_kuis', 'pretest')
-                            ->exists();
+            ->where('jenis_kuis', 'pretest')
+            ->exists();
 
         // Cek apakah posttest sudah ada di materi ini
         $posttestExists = KuisMateri::where('materi_id', $materi->id)
-                            ->where('jenis_kuis', 'posttest')
-                            ->exists();
+            ->where('jenis_kuis', 'posttest')
+            ->exists();
 
         // Mengembalikan data kuis beserta status pretest dan posttest
         return response()->json([
@@ -112,7 +114,8 @@ class SoalKuisMateriController extends Controller
         ]);
     }
 
-    public function update(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi) {
+    public function update(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
+    {
         $validator = Validator::make($request->all(), [
             'jenis_kuis' => 'required',
             'jadwal' => 'required|string',
@@ -124,7 +127,7 @@ class SoalKuisMateriController extends Controller
 
         DB::beginTransaction();
         try {
-            $kuis = KuisMateri::where('id',$request->kuis_id)->first();
+            $kuis = KuisMateri::where('id', $request->kuis_id)->first();
             $oldData = $kuis->getOriginal();
 
             $jadwal = $request->jadwal;
@@ -162,12 +165,14 @@ class SoalKuisMateriController extends Controller
         }
     }
 
-    public function delete(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi, KuisMateri $kuis){
-        $oldData = $kuis->toArray();
-        $kuis->delete();
+    public function delete(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi, KuisMateri $kuis, PertanyaanKuisMateri $soalKuis)
+    {
+        $oldData = $soalKuis->toArray();
+        $soalKuis->delete();
+
         activity()
             ->causedBy(Auth::user())
-            ->performedOn($kuis)
+            ->performedOn($soalKuis)
             ->event('admin_deleted')
             ->withProperties([
                 'old_data' => $oldData, // Data lama
@@ -178,6 +183,6 @@ class SoalKuisMateriController extends Controller
             'message' => 'Data berhasil dihapus!',
             'alert-type' => 'success'
         );
-        return redirect()->route('kelas.topikPembahasan.materi.kuis',[$kelas->id, $topikPembahasan->id, $materi->id])->with($notification);
+        return redirect()->route('kelas.topikPembahasan.materi.soalKuis', [$kelas->id, $topikPembahasan->id, $materi->id, $kuis->id])->with($notification);
     }
 }

@@ -17,18 +17,18 @@ class KuisMateriController extends Controller
     public function index(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
     {
         $data = Materi::with(['kuis', 'topikPembahasanKelas.kelas'])
-        ->whereHas('topikPembahasanKelas', function ($query) use ($kelas) {
-            $query->whereHas('kelas', function ($query2) use ($kelas) {
-                $query2->where('id', $kelas->id)
-                    ->where('pengampu_id', Auth::user()->id);
-            });
-        })
-        ->where('id', $materi->id)
-        ->first();
+            ->whereHas('topikPembahasanKelas', function ($query) use ($kelas) {
+                $query->whereHas('kelas', function ($query2) use ($kelas) {
+                    $query2->where('id', $kelas->id)
+                        ->where('pengampu_id', Auth::user()->id);
+                });
+            })
+            ->where('id', $materi->id)
+            ->first();
 
         if ($data) {
             $data->kuis->each(function ($kuis) {
-            $kuis->pertanyaan_count = $kuis->pertanyaans()->count();
+                $kuis->pertanyaan_count = $kuis->pertanyaans()->count();
             });
         }
         $pretestExists = $data->kuis->contains('jenis_kuis', 'pretest');
@@ -37,14 +37,15 @@ class KuisMateriController extends Controller
         return view('admin/kelas.topik_pembahasan/materi/kuis.index', compact('data', 'pretestExists', 'posttestExists'));
     }
 
-    public function post(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi){
+    public function post(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
+    {
         $validator = Validator::make($request->all(), [
             'jenis_kuis' => 'required',
             'jadwal' => 'required|string',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error'  =>  0, 'text'   =>  $validator->errors()->first()],422);
+            return response()->json(['error'  =>  0, 'text'   =>  $validator->errors()->first()], 422);
         }
 
         DB::beginTransaction();
@@ -63,24 +64,25 @@ class KuisMateriController extends Controller
             ]);
 
             activity()
-            ->causedBy(Auth::user())
-            ->performedOn($simpan)
-            ->event('admin_created')
-            ->withProperties([
-                'created_fields' => $simpan,
-                'log_name' => 'kuis materi'
-            ])
-            ->log(Auth::user()->nama_lengkap . ' menginput data kuis materi baru.');
+                ->causedBy(Auth::user())
+                ->performedOn($simpan)
+                ->event('admin_created')
+                ->withProperties([
+                    'created_fields' => $simpan,
+                    'log_name' => 'kuis materi'
+                ])
+                ->log(Auth::user()->nama_lengkap . ' menginput data kuis materi baru.');
 
             DB::commit();
             return response()->json([
                 'text'  =>  'Berhasil, penyimpanan data berhasil',
-                'url'   =>  route('kelas.topikPembahasan.materi.kuis',[$kelas->id, $topikPembahasan->id, $materi->id]),
+                'url'   =>  route('kelas.topikPembahasan.materi.kuis', [$kelas->id, $topikPembahasan->id, $materi->id]),
             ]);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'text' =>  'Oopps, penyimpanan data gagal']);
+                'text' =>  'Oopps, penyimpanan data gagal'
+            ]);
         }
     }
 
@@ -88,13 +90,13 @@ class KuisMateriController extends Controller
     {
         // Cek apakah pretest sudah ada di materi ini
         $pretestExists = KuisMateri::where('materi_id', $materi->id)
-                            ->where('jenis_kuis', 'pretest')
-                            ->exists();
+            ->where('jenis_kuis', 'pretest')
+            ->exists();
 
         // Cek apakah posttest sudah ada di materi ini
         $posttestExists = KuisMateri::where('materi_id', $materi->id)
-                            ->where('jenis_kuis', 'posttest')
-                            ->exists();
+            ->where('jenis_kuis', 'posttest')
+            ->exists();
 
         // Mengembalikan data kuis beserta status pretest dan posttest
         return response()->json([
@@ -107,7 +109,8 @@ class KuisMateriController extends Controller
         ]);
     }
 
-    public function update(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi) {
+    public function update(Request $request, Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi)
+    {
         $validator = Validator::make($request->all(), [
             'jenis_kuis' => 'required',
             'jadwal' => 'required|string',
@@ -119,7 +122,7 @@ class KuisMateriController extends Controller
 
         DB::beginTransaction();
         try {
-            $kuis = KuisMateri::where('id',$request->kuis_id)->first();
+            $kuis = KuisMateri::where('id', $request->kuis_id)->first();
             $oldData = $kuis->getOriginal();
 
             $jadwal = $request->jadwal;
@@ -157,7 +160,8 @@ class KuisMateriController extends Controller
         }
     }
 
-    public function delete(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi, KuisMateri $kuis){
+    public function delete(Kelas $kelas, TopikPembahasanKelas $topikPembahasan, Materi $materi, KuisMateri $kuis)
+    {
         $oldData = $kuis->toArray();
         $kuis->delete();
         activity()
@@ -173,6 +177,6 @@ class KuisMateriController extends Controller
             'message' => 'Data berhasil dihapus!',
             'alert-type' => 'success'
         );
-        return redirect()->route('kelas.topikPembahasan.materi.kuis',[$kelas->id, $topikPembahasan->id, $materi->id])->with($notification);
+        return redirect()->route('kelas.topikPembahasan.materi.kuis', [$kelas->id, $topikPembahasan->id, $materi->id])->with($notification);
     }
 }
