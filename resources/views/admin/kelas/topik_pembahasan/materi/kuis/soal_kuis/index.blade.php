@@ -200,7 +200,7 @@
             // Load questions based on the selected 'jenis'
             $('#jenis').on('change', function() {
                 var jenis = $(this).val();
-                const kelasId = @json($kelas->id);
+                const kelasId = @json($data->materi->topikPembahasanKelas->kelas->id);
                 const kuisId = @json($data->id);
 
                 $.ajax({
