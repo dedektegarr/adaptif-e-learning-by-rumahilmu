@@ -205,7 +205,7 @@
                                                                                                 style="transform: scale(0.6);" />
                                                                                         </div>
                                                                                         <div class="fs-7">
-                                                                                            {{ $jawaban->jawaban }}
+                                                                                            {!! Str::replace(['â€œ', 'â€', 'â€˜', 'â€™'], ['"', '"', "'", "'"], $jawaban->jawaban) !!}
                                                                                         </div>
                                                                                     </div>
                                                                                 </label>
