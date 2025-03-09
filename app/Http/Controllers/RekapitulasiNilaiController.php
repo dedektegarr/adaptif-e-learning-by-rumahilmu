@@ -94,18 +94,37 @@ class RekapitulasiNilaiController extends Controller
         $topikKelas = $kelas->topikPembahasanKelas;
 
         $mahasiswa_nilai = $mahasiswas->map(function ($mhs) use ($kelas) {
-            $mhs->pretest = $mhs->nilaiKuisMateris->where("kuisMateri.jenis_kuis", "==", "pretest");
-            $mhs->topikPretest = $mhs->pretest->groupBy("kuis_materi_id");
+            $mhs->pretest = $mhs->nilaiKuisMateris
+                ->where("kuisMateri.jenis_kuis", "==", "pretest")
+                ->where("kuisMateri.materi.topikPembahasanKelas.kelas.id", $kelas->id)
+                ->sum("nilai");
 
-            $mhs->posttest = $mhs->nilaiKuisMateris->where("kuisMateri.jenis_kuis", "==", "posttest");
-            $mhs->topikPosttest = $mhs->posttest->groupBy("kuis_materi_id");
+            $mhs->posttest = $mhs->nilaiKuisMateris
+                ->where("kuisMateri.jenis_kuis", "==", "posttest")
+                ->where("kuisMateri.materi.topikPembahasanKelas.kelas.id", $kelas->id)
+                ->sum("nilai");
 
-            $mhs->tugasIndividu = $mhs->tugasIndividus->avg("rata_rata");
-            $mhs->tugasKelompok = $mhs->tugasKelompokDetail->avg("rata_rata");
-            $mhs->penilaianKelompok = $mhs->penilaianKelompok->avg("rata_rata");
+            $mhs->jumlah_nilai_kuis = $mhs->pretest + $mhs->posttest;
 
-            $mhs->uts = $mhs->utsNilai->avg("nilai");
-            $mhs->uas = $mhs->uasNilai->avg("nilai");
+            $mhs->tugasIndividu = $mhs->tugasIndividus
+                ->where("tugasIndividu.materi.topikPembahasanKelas.kelas.id", $kelas->id)
+                ->avg("rata_rata");
+
+            $mhs->tugasKelompok = $mhs->tugasKelompokDetail
+                ->where("pengumpulanTugasKelompok.tugasKelompok.materi.topikPembahasanKelas.kelas.id", $kelas->id)
+                ->avg("rata_rata");
+
+            $mhs->penilaianKelompok = $mhs->penilaianKelompok
+                ->where("topikPembahasanKelas.kelas.id", $kelas->id)
+                ->avg("rata_rata");
+
+            $mhs->uts = $mhs->utsNilai
+                ->where("uts.kelas.id", $kelas->id)
+                ->avg("nilai");
+
+            $mhs->uas = $mhs->uasNilai
+                ->where("uas.kelas.id", $kelas->id)
+                ->avg("nilai");
 
             return $mhs;
         });
