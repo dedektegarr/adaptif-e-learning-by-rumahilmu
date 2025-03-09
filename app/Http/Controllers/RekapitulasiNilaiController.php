@@ -37,22 +37,45 @@ class RekapitulasiNilaiController extends Controller
 
         $kelas = Kelas::all();
 
-        $mahasiswa_nilai = $mahasiswas->map(function ($mhs) {
-            $mhs->pretest = $mhs->nilaiKuisMateris->where("kuisMateri.jenis_kuis", "==", "pretest")->sum("nilai");
-            $mhs->posttest = $mhs->nilaiKuisMateris->where("kuisMateri.jenis_kuis", "==", "posttest")->sum("nilai");
+        $mahasiswa_nilai = $mahasiswas->map(function ($mhs) use ($request) {
+            $mhs->pretest = $mhs->nilaiKuisMateris
+                ->where("kuisMateri.jenis_kuis", "==", "pretest")
+                ->where("kuisMateri.materi.topikPembahasanKelas.kelas.id", $request->kelas_id)
+                ->sum("nilai");
+
+            $mhs->posttest = $mhs->nilaiKuisMateris
+                ->where("kuisMateri.jenis_kuis", "==", "posttest")
+                ->where("kuisMateri.materi.topikPembahasanKelas.kelas.id", $request->kelas_id)
+                ->sum("nilai");
+
             $mhs->jumlah_nilai_kuis = $mhs->pretest + $mhs->posttest;
 
-            $mhs->tugasIndividu = $mhs->tugasIndividus->avg("rata_rata");
-            $mhs->tugasKelompok = $mhs->tugasKelompokDetail->avg("rata_rata");
-            $mhs->penilaianKelompok = $mhs->penilaianKelompok->avg("rata_rata");
+            $mhs->tugasIndividu = $mhs->tugasIndividus
+                ->where("tugasIndividu.materi.topikPembahasanKelas.kelas.id", $request->kelas_id)
+                ->avg("rata_rata");
 
-            $mhs->uts = $mhs->utsNilai->avg("nilai");
-            $mhs->uas = $mhs->uasNilai->avg("nilai");
+            $mhs->tugasKelompok = $mhs->tugasKelompokDetail
+                ->where("pengumpulanTugasKelompok.tugasKelompok.materi.topikPembahasanKelas.kelas.id", $request->kelas_id)
+                ->avg("rata_rata");
+
+            $mhs->penilaianKelompok = $mhs->penilaianKelompok
+                ->where("topikPembahasanKelas.kelas.id", $request->kelas_id)
+                ->avg("rata_rata");
+
+            $mhs->uts = $mhs->utsNilai
+                ->where("uts.kelas.id", $request->kelas_id)
+                ->avg("nilai");
+
+            $mhs->uas = $mhs->uasNilai
+                ->where("uas.kelas.id", $request->kelas_id)
+                ->avg("nilai");
 
             return $mhs;
         });
 
-        return view("admin.rekapitulasi.index", compact("kelas", "mahasiswas"));
+        $selectedKelas = Kelas::find($request->kelas_id);
+
+        return view("admin.rekapitulasi.index", compact("kelas", "mahasiswas", "selectedKelas"));
     }
 
     public function export(Kelas $kelas)
